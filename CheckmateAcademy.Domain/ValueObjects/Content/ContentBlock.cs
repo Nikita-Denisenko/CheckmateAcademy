@@ -2,7 +2,7 @@
 {
     public abstract record ContentBlock
     {
-        public int Order { get; private set; }
+        public int Order { get; }
 
         public ContentBlock(int order)
         {

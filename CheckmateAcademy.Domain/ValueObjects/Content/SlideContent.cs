@@ -3,7 +3,7 @@
     public record SlideContent
     {
         private readonly List<ContentBlock> _blocks = new();
-        public IReadOnlyList<ContentBlock> Blocks => _blocks;
+        public IReadOnlyCollection<ContentBlock> Blocks => _blocks;
 
         public SlideContent(IEnumerable<ContentBlock> blocks)
         {

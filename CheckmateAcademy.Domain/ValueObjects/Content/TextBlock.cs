@@ -2,7 +2,7 @@
 {
     public sealed record TextBlock : ContentBlock
     {
-        public string Text { get; private set; } = string.Empty;
+        public string Text { get; } = string.Empty;
 
         public TextBlock(string text, int order) : base(order)
         {
