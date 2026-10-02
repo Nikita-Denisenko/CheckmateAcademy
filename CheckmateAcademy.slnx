@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CheckmateAcademy.Application/CheckmateAcademy.Application.csproj" />
+  <Project Path="CheckmateAcademy.Domain/CheckmateAcademy.Domain.csproj" />
+  <Project Path="CheckmateAcademy.Infrastructure/CheckmateAcademy.Infrastructure.csproj" />
+  <Project Path="CheckmateAcademy.Presentation/CheckmateAcademy.Presentation.csproj" />
+</Solution>

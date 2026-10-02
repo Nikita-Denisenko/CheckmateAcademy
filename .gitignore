@@ -1,0 +1,71 @@
+# ===========================
+# .NET (бэкенд)
+# ===========================
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+**/.vs/
+**/appsettings.Development.json
+**/launchSettings.json
+**/appsettings.Local.json
+**/*.pfx
+**/*.p12
+
+# ===========================
+# Unity (фронтенд)
+# ===========================
+**/[Ll]ibrary/
+**/[Tt]emp/
+**/[Oo]bj/
+**/[Bb]uild/
+**/[Bb]uilds/
+**/[Ll]ogs/
+**/[Uu]ser[Ss]ettings/
+**/*.csproj
+**/*.unityproj
+**/*.sln
+**/*.userprefs
+**/*.pidb
+**/*.booproj
+**/*.svd
+**/*.pdb
+**/*.mdb
+**/*.opendb
+**/*.dll
+**/*.meta
+**/*.asset
+**/*.prefab
+**/*.unity
+**/*.mat
+**/*.fbx
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/*.tga
+**/*.psd
+**/*.ai
+**/*.fbx
+**/*.blend
+
+# ===========================
+# Rider / VS Code
+# ===========================
+.idea/
+.vscode/
+*.sln.iml
+
+# ===========================
+# OS generated
+# ===========================
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+*.swo
+
+# ===========================
+# Docker
+# ===========================
+docker-compose.override.yml
+.dockerignore
