@@ -1,12 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CheckmateAcademy.Domain.Enums;
+using CheckmateAcademy.Domain.ValueObjects.Game;
 
 namespace CheckmateAcademy.Domain.Entities.Chess
 {
-    internal class Queen
+    public class Queen : Piece
     {
+        public override string Name => nameof(Queen);
+
+        public Queen(Color color, BoardPosition position) : base(color, position) { }
+
+        public override bool IsValidMove(BoardPosition newPosition)
+        {
+            int rowDifference = Math.Abs(newPosition.Row - Position.Row);
+            int columnDifference = Math.Abs(newPosition.Column - Position.Column);
+
+            return rowDifference == 0
+                || columnDifference == 0
+                || rowDifference == columnDifference;
+        }
     }
 }

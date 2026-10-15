@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CheckmateAcademy.Domain.Enums;
+using CheckmateAcademy.Domain.ValueObjects.Game;
 
 namespace CheckmateAcademy.Domain.Entities.Chess
 {
-    internal class Bishop
+    public class Bishop : Piece
     {
+        public Bishop(Color color, BoardPosition position) : base(color, position)
+        {
+        }
+
+        public override string Name => nameof(Bishop);
+
+        public override bool IsValidMove(BoardPosition newPosition)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

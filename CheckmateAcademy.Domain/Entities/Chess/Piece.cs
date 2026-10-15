@@ -10,22 +10,27 @@ namespace CheckmateAcademy.Domain.Entities.Chess
         public BoardPosition Position { get; private set; }
         public abstract string Name { get; }
 
-        protected Piece(
-            Color color,
-            BoardPosition position)
+        public bool HasMoved { get; private set; }
+
+        public Piece(Color color, BoardPosition position)
         {
             Color = color;
             Position = position;
         }
 
-        public void Move(BoardPosition newPosition)
+        public void MoveTo(BoardPosition newPosition)
         {
-            if (!IsValidMove(newPosition))
-                throw new DomainException($"Invalid move for {Name} from {Position} to {newPosition}");
-
             Position = newPosition;
+            HasMoved = true;
+        }
+
+        internal void SetPositionForSimulation(BoardPosition position)
+        {
+            Position = position;
         }
 
         public abstract bool IsValidMove(BoardPosition newPosition);
+
+        public virtual bool CanJumpOverPieces => false;
     }
 }
