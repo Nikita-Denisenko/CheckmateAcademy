@@ -11,6 +11,8 @@ namespace CheckmateAcademy.Domain.Entities.Chess
 
         public IReadOnlyList<Piece> Pieces => _pieces;
 
+        public Move? LastMove { get; private set; }
+
         public ChessBoard()
         {
             _pieces = StartPositionInitializer.InitializePieces();
@@ -28,16 +30,40 @@ namespace CheckmateAcademy.Domain.Entities.Chess
             if (move.Type == MoveType.Castling)
             {
                 MoveCastlingPieces(move);
+                LastMove = move;
                 return;
             }
 
             Piece? capturedPiece = _pieces.FirstOrDefault(
                 p => p.Position == move.To);
 
+            if (piece is Pawn pawn &&
+                capturedPiece == null &&
+                move.From.Column != move.To.Column)
+            {
+                int direction = pawn.Color == Color.White ? -1 : 1;
+
+                var capturedPosition = new BoardPosition(
+                    move.To.Row - direction,
+                    move.To.Column);
+
+                capturedPiece = _pieces.FirstOrDefault(
+                    p => p.Position == capturedPosition);
+
+                if (capturedPiece is not Pawn ||
+                    capturedPiece.Color == pawn.Color)
+                {
+                    throw new DomainException(
+                        "Invalid en passant capture.");
+                }
+            }
+
             if (capturedPiece != null)
                 _pieces.Remove(capturedPiece);
 
             piece.MoveTo(move.To);
+
+            LastMove = move;
         }
 
         private void MoveCastlingPieces(Move move)

@@ -11,6 +11,9 @@ namespace CheckmateAcademy.Domain.Entities.Chess
 
         public override bool IsValidMove(BoardPosition newPosition)
         {
+            if (newPosition == Position)
+                return false;
+
             int rowDifference = Math.Abs(newPosition.Row - Position.Row);
             int columnDifference = Math.Abs(newPosition.Column - Position.Column);
 

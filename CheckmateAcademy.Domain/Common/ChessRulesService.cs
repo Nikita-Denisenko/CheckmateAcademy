@@ -109,7 +109,7 @@ namespace CheckmateAcademy.Domain.Common
                 return true;
             }
 
-            return false;
+            return IsValidEnPassant(board, pawn, target, targetPiece);
         }
 
         private static bool IsValidCastling(ChessBoard board, Move move)
@@ -361,6 +361,56 @@ namespace CheckmateAcademy.Domain.Common
         private static Color Opponent(Color color)
         {
             return color == Color.White ? Color.Black : Color.White;
+        }
+
+        private static bool IsValidEnPassant(
+            ChessBoard board,
+            Pawn pawn,
+            BoardPosition target,
+            Piece? targetPiece)
+        {
+            if (targetPiece != null)
+                return false;
+
+            int direction = pawn.Color == Color.White ? -1 : 1;
+
+            int rowDifference = target.Row - pawn.Position.Row;
+            int columnDifference = target.Column - pawn.Position.Column;
+
+            if (rowDifference != direction ||
+                Math.Abs(columnDifference) != 1)
+            {
+                return false;
+            }
+
+            Move? lastMove = board.LastMove;
+
+            if (lastMove == null ||
+                lastMove.Type != MoveType.Normal ||
+                lastMove.Piece is not Pawn opponentPawn)
+            {
+                return false;
+            }
+
+            if (opponentPawn.Color == pawn.Color)
+                return false;
+
+            if (lastMove.From.Column != lastMove.To.Column)
+                return false;
+
+            if (Math.Abs(lastMove.To.Row - lastMove.From.Row) != 2)
+                return false;
+
+            if (lastMove.To != opponentPawn.Position)
+                return false;
+
+            if (opponentPawn.Position.Row != pawn.Position.Row)
+                return false;
+
+            if (opponentPawn.Position.Column != target.Column)
+                return false;
+
+            return board.Pieces.Contains(opponentPawn);
         }
     }
 }

@@ -13,7 +13,14 @@ namespace CheckmateAcademy.Domain.Entities.Chess
 
         public override bool IsValidMove(BoardPosition newPosition)
         {
-            throw new NotImplementedException();
+            if (newPosition == Position)
+                return false;
+
+            int rowDifference = Math.Abs(newPosition.Row - Position.Row);
+            int columnDifference = Math.Abs(newPosition.Column - Position.Column);
+
+            return (rowDifference == 2 && columnDifference == 1) 
+                || (rowDifference == 1 && columnDifference == 2);
         }
 
         public override bool CanJumpOverPieces => true;
