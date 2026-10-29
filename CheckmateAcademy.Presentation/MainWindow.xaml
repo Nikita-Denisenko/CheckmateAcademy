@@ -1,12 +1,119 @@
 ﻿<Window x:Class="CheckmateAcademy.Presentation.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:CheckmateAcademy.Presentation"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Checkmate Academy"
+        Width="1440"
+        Height="900"
+        MinWidth="1050"
+        MinHeight="700"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackground}"
+        Foreground="{StaticResource PrimaryTextBrush}">
 
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="245"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Боковая панель -->
+        <Border Grid.Column="0"
+                Background="{StaticResource SidebarBackground}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,1,0">
+
+            <DockPanel Margin="18">
+
+                <StackPanel DockPanel.Dock="Top"
+                            Margin="0,8,0,30">
+
+                    <TextBlock Text="CHECKMATE"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource AccentBrush}"/>
+
+                    <TextBlock Text="ACADEMY"
+                               Margin="0,3,0,0"
+                               FontSize="11"
+                               Foreground="{StaticResource SecondaryTextBrush}"/>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Top">
+
+                    <TextBlock Text="ОБУЧЕНИЕ"
+                               Margin="10,0,0,10"
+                               FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource MutedTextBrush}"/>
+
+                    <Button Content="Главная"
+                            Style="{StaticResource NavigationButton}"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Home"/>
+
+                    <Button Content="Курсы"
+                            Style="{StaticResource NavigationButton}"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Courses"/>
+
+                    <Button Content="Задачи"
+                            Style="{StaticResource NavigationButton}"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Tasks"/>
+
+                    <Button Content="Игра с ботом"
+                            Style="{StaticResource NavigationButton}"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Bot"/>
+
+                    <Button Content="Анализ партий"
+                            Style="{StaticResource NavigationButton}"
+                            Command="{Binding NavigateCommand}"
+                            CommandParameter="Study"/>
+                </StackPanel>
+
+                <Border DockPanel.Dock="Bottom"
+                        Background="{StaticResource CardBackground}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="12"
+                        Margin="0,20,0,0">
+
+                    <StackPanel>
+                        <TextBlock Text="Checkmate Academy"
+                                   FontWeight="SemiBold"/>
+
+                        <TextBlock Text="Шахматы без ограничений"
+                                   Margin="0,5,0,0"
+                                   FontSize="11"
+                                   Foreground="{StaticResource SecondaryTextBrush}"/>
+                    </StackPanel>
+                </Border>
+
+            </DockPanel>
+        </Border>
+
+        <!-- Основная область -->
+        <Grid Grid.Column="1" Margin="32">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Margin="0,0,0,26">
+                <TextBlock Text="{Binding PageTitle}"
+                           FontSize="28"
+                           FontWeight="SemiBold"/>
+
+                <TextBlock Text="{Binding PageSubtitle}"
+                           Margin="0,7,0,0"
+                           FontSize="13"
+                           Foreground="{StaticResource SecondaryTextBrush}"/>
+            </StackPanel>
+
+            <ContentControl Grid.Row="1"
+                            Content="{Binding CurrentView}"/>
+        </Grid>
     </Grid>
 </Window>

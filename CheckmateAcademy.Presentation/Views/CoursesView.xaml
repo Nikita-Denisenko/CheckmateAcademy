@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="CheckmateAcademy.Presentation.Views.CoursesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <StackPanel>
+        <Border Style="{StaticResource ContentCard}">
+            <StackPanel>
+                <TextBlock Text="Обучающие курсы"
+                           Style="{StaticResource PageHeading}"/>
+                <TextBlock Text="Здесь будут курсы с теоретическими материалами и интерактивными шахматными упражнениями."
+                           Style="{StaticResource DescriptionText}"
+                           Margin="0,12,0,0"/>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>
