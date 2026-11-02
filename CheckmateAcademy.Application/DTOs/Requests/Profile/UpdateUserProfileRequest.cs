@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckmateAcademy.Application.DTOs.Requests.Lessons
+namespace CheckmateAcademy.Application.DTOs.Requests.Profile
 {
-    internal class GetSlide
+    internal class UpdateUserProfileRequest
     {
     }
 }
