@@ -2,8 +2,8 @@
 {
     public record UserProfile
     {
-        public string Name { get; } = string.Empty;
-        public string Surname { get; } = string.Empty;
+        public string Name { get; }
+        public string Surname { get; }
         public DateTime BirthDate { get; }
         public string? AboutInfo { get; }
         public string? AvatarUrl { get; }

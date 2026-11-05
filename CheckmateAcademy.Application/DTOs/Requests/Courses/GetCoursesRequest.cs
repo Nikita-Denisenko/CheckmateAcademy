@@ -1,12 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DTOs.Requests.Courses
+﻿namespace CheckmateAcademy.Application.DTOs.Requests.Courses
 {
-    internal class GetCoursesRequest
+    public record GetCoursesRequest
     {
+        public int UserId { get; init; }
+        public int Page { get; init; } = 1;
+        public int Size { get; init; } = 10;
+
+        public GetCoursesRequest(int userId, int page = 1, int size = 10)
+        {
+            if (userId <= 0)
+                throw new ArgumentException("UserId must be greater than zero.", nameof(userId));
+
+            if (page <= 0)
+                throw new ArgumentException("Page must be greater than zero.", nameof(page));
+
+            if (size <= 0)
+                throw new ArgumentException("Size must be greater than zero.", nameof(size));
+
+            UserId = userId;
+            Page = page;
+            Size = size;
+        }
     }
 }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.Interfaces
+﻿namespace CheckmateAcademy.Application.Interfaces
 {
-    internal class IGameService
+    public interface IGameService
     {
     }
 }

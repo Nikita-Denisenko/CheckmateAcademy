@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckmateAcademy.Application.DTOs.Responses.Progress
+namespace CheckmateAcademy.Application.DataModels
 {
-    internal class UserProgressResponse
+    internal class CourseData
     {
     }
 }

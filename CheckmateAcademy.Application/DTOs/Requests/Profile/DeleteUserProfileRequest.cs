@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DTOs.Requests.Profile
+﻿namespace CheckmateAcademy.Application.DTOs.Requests.Profile
 {
-    internal class DeleteUserProfileRequest
+    public record DeleteUserProfileRequest
     {
+        public int Id { get; init; }
+
+        public DeleteUserProfileRequest(int id)
+        {
+            if (id <= 0)
+                throw new ArgumentException("Id must be greater than zero.", nameof(id));
+
+            Id = id;
+        }
     }
 }

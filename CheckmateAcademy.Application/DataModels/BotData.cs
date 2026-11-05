@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckmateAcademy.Application.Interfaces
+namespace CheckmateAcademy.Application.DataModels
 {
-    internal class IProgressService
+    internal class BotData
     {
     }
 }
