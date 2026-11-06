@@ -1,12 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DataModels
+﻿namespace CheckmateAcademy.Application.DataModels
 {
-    internal class LessonSlideData
+    public record LessonSlideData
     {
+        public string Title { get; } = string.Empty;
+        public int Order { get; } = 1;
+        public DateTime CreatedAt { get; }
+        public SlideContentData? SlideContentData { get;  }
+        public ExerciseData? ExerciseData { get; }
+
+        public LessonSlideData(
+            string title, 
+            int order, 
+            DateTime createdAt, 
+            SlideContentData? slideContentData, 
+            ExerciseData? exerciseData)
+        {
+            Title = title;
+            Order = order;
+            CreatedAt = createdAt;
+            SlideContentData = slideContentData;
+            ExerciseData = exerciseData;
+        }
     }
 }
