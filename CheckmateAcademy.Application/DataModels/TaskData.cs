@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace CheckmateAcademy.Data.DataModels;
 
-namespace CheckmateAcademy.Application.DataModels
+public record TaskData
 {
-    internal class TaskData
-    {
-    }
+    public int Id { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public List<PieceSetupData> StartPosition { get; set; } = [];
+    public List<TaskSolutionMoveData> Solution { get; set; } = [];
+    public int Difficulty { get; set; }
 }

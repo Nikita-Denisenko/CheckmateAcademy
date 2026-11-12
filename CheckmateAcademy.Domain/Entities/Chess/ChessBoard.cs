@@ -18,6 +18,29 @@ namespace CheckmateAcademy.Domain.Entities.Chess
             _pieces = StartPositionInitializer.InitializePieces();
         }
 
+        public ChessBoard(ChessBoardSetup setup)
+        {
+            ArgumentNullException.ThrowIfNull(setup);
+
+            _pieces = setup.Pieces
+                .Select(CreatePiece)
+                .ToList();
+        }
+
+        private static Piece CreatePiece(PieceSetup setup)
+        {
+            return setup.Type switch
+            {
+                PieceType.Pawn => new Pawn(setup.Color, setup.Position),
+                PieceType.Rook => new Rook(setup.Color, setup.Position),
+                PieceType.Knight => new Knight(setup.Color, setup.Position),
+                PieceType.Bishop => new Bishop(setup.Color, setup.Position),
+                PieceType.Queen => new Queen(setup.Color, setup.Position),
+                PieceType.King => new King(setup.Color, setup.Position),
+                _ => throw new ArgumentOutOfRangeException(nameof(setup.Type))
+            };
+        }
+
         public void MakeMove(Move move)
         {
             DomainValidation.NotNull(move, nameof(move));

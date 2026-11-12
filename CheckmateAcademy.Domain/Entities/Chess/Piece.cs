@@ -1,5 +1,4 @@
 ﻿using CheckmateAcademy.Domain.Enums;
-using CheckmateAcademy.Domain.Exceptions;
 using CheckmateAcademy.Domain.ValueObjects.Game;
 
 namespace CheckmateAcademy.Domain.Entities.Chess
