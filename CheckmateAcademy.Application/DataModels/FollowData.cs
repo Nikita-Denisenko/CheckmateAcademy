@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DataModels
+﻿namespace CheckmateAcademy.Application.DataModels
 {
-    internal class FollowData
+    public record FollowData
     {
+        public int Id { get; init; }
+        public int FollowerId { get; init; }
+        public int TargetId { get; init; }
+        public DateTime CreatedAt { get; init; }
     }
 }

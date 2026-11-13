@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DataModels
+﻿namespace CheckmateAcademy.Application.DataModels
 {
-    internal class StudyData
+    public class StudyData
     {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public string Name { get; set; } = null!;
+        public string? Description { get; set; }
+
+        public List<StudyChapterData> Chapters { get; set; } = [];
     }
 }

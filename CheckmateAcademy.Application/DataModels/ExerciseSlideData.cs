@@ -1,4 +1,4 @@
-﻿namespace CheckmateAcademy.Data.DataModels;
+﻿namespace CheckmateAcademy.Application.DataModels;
 
 public class ExerciseSlideData
 {

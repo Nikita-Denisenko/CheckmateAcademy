@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DataModels
+﻿namespace CheckmateAcademy.Application.DataModels
 {
-    internal class GameData
+    public class GameData
     {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public int BotId { get; set; }
+
+        public ChessBoardSetupData InitialPosition { get; set; } = null!;
+
+        public List<GameMoveData> Moves { get; set; } = [];
     }
 }
