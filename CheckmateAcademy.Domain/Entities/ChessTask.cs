@@ -1,31 +1,23 @@
-﻿using CheckmateAcademy.Domain.ValueObjects;
-using CheckmateAcademy.Domain.ValueObjects.Game;
+﻿using CheckmateAcademy.Domain.ValueObjects.Game;
 using CheckmateAcademy.Domain.ValueObjects.Tasks;
 
 namespace CheckmateAcademy.Domain.Entities;
 
-public class Task
+public class ChessTask
 {
-    private readonly List<ExerciseSolutionMove> _solution = [];
-
     public int Id { get; private set; }
     public string Title { get; private set; }
     public string Description { get; private set; }
     public ChessBoardSetup StartPosition { get; private set; }
 
+    private readonly List<ExerciseSolutionMove> _solution = [];
     public IReadOnlyCollection<ExerciseSolutionMove> Solution =>
         _solution.AsReadOnly();
 
     public int Difficulty { get; private set; }
 
-    protected Task()
-    {
-        Title = null!;
-        Description = null!;
-        StartPosition = null!;
-    }
-
-    public Task(
+    public ChessTask(
+        int id,
         string title,
         string description,
         ChessBoardSetup startPosition,
@@ -40,6 +32,7 @@ public class Task
         if (difficulty < 1 || difficulty > 5)
             throw new ArgumentOutOfRangeException(nameof(difficulty));
 
+        Id = id;
         Title = title;
         Description = description;
         StartPosition = startPosition;

@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DataModels
+﻿namespace CheckmateAcademy.Application.DataModels
 {
-    internal class NotificationData
+    public record NotificationData
     {
+        public int Id { get; init; }
+        public int UserId { get; init; }
+        public string Message { get; init; } = string.Empty;
+        public DateTime CreatedAt { get; init; }
+        public bool IsRead { get; init; }
     }
 }

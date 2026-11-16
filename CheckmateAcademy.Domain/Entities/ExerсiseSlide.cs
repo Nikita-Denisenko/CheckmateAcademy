@@ -14,4 +14,17 @@ public class ExerciseSlide : LessonSlide
         Exercise = exercise;
         ExerciseId = exercise.Id;
     }
+
+    public ExerciseSlide(
+            string title,
+            int order,
+            DateTime createdAt,
+            Exercise exercise)
+            : base(title, order, createdAt)
+    {
+        ArgumentNullException.ThrowIfNull(exercise);
+
+        Exercise = exercise;
+        ExerciseId = exercise.Id;
+    }
 }

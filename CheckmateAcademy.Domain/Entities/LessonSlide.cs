@@ -22,5 +22,15 @@ namespace CheckmateAcademy.Domain.Entities
             Order = order;
             CreatedAt = DateTime.UtcNow;
         }
+
+        protected LessonSlide(string title, int order, DateTime createdAt)
+        {
+            DomainValidation.NotEmptyString(title, nameof(title));
+            DomainValidation.PositiveOrder(order, nameof(order));
+
+            Title = title;
+            Order = order;
+            CreatedAt = createdAt;
+        }
     }
 }

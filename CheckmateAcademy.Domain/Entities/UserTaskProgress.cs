@@ -8,7 +8,7 @@ public class UserTaskProgress
     public int Id { get; private set; }
     public int UserId { get; private set; }
     public int TaskId { get; private set; }
-    public Task Task { get; private set; }
+    public ChessTask Task { get; private set; }
     public ChessBoard CurrentBoard { get; private set; }
     public int AttemptsCount { get; private set; }
     public TaskProgressStatus Status { get; private set; }
@@ -21,7 +21,7 @@ public class UserTaskProgress
         CurrentBoard = null!;
     }
 
-    public UserTaskProgress(int userId, Task task)
+    public UserTaskProgress(int userId, ChessTask task)
     {
         ArgumentNullException.ThrowIfNull(task);
 

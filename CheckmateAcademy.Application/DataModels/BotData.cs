@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DataModels
+﻿namespace CheckmateAcademy.Application.DataModels
 {
-    internal class BotData
+    public record BotData
     {
+        public int Id { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public int Rating { get; init; }
     }
 }

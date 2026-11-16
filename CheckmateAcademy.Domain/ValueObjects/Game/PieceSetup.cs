@@ -1,5 +1,4 @@
 ﻿using CheckmateAcademy.Domain.Enums;
-using CheckmateAcademy.Domain.ValueObjects.Game;
 
 namespace CheckmateAcademy.Domain.ValueObjects.Game;
 
@@ -13,7 +12,9 @@ public enum PieceType
     King
 }
 
-public sealed record PieceSetup(
-    PieceType Type,
-    Color Color,
-    BoardPosition Position);
+public sealed record PieceSetup
+{
+    public PieceType Type { get; init; }
+    public Color Color { get; init; }
+    public BoardPosition Position { get; init; }
+}

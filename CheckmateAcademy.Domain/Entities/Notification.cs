@@ -26,6 +26,23 @@ namespace CheckmateAcademy.Domain.Entities
             IsRead = false;
         }
 
+        public Notification(
+            int id,
+            int userId,
+            string message,
+            DateTime createdAt,
+            bool isRead)
+        {
+            DomainValidation.PositiveId(id, nameof(id));
+            DomainValidation.PositiveId(userId, nameof(userId));
+            DomainValidation.NotEmptyString(message, nameof(message));
+            Id = id;
+            UserId = userId;
+            Message = message;
+            CreatedAt = createdAt;
+            IsRead = isRead;
+        }
+
         public void MarkAsRead()
         {
             IsRead = true;

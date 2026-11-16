@@ -1,5 +1,4 @@
-﻿using CheckmateAcademy.Domain.ValueObjects;
-using CheckmateAcademy.Domain.ValueObjects.Game;
+﻿using CheckmateAcademy.Domain.ValueObjects.Game;
 using CheckmateAcademy.Domain.ValueObjects.Tasks;
 
 namespace CheckmateAcademy.Domain.Entities;
@@ -15,14 +14,8 @@ public class Exercise
     public IReadOnlyCollection<ExerciseSolutionMove> Solution =>
         _solution.AsReadOnly();
 
-    protected Exercise()
-    {
-        Title = null!;
-        Description = null!;
-        StartPosition = null!;
-    }
-
     public Exercise(
+        int id,
         string title,
         string description,
         ChessBoardSetup startPosition,
@@ -33,6 +26,7 @@ public class Exercise
         ArgumentNullException.ThrowIfNull(startPosition);
         ArgumentNullException.ThrowIfNull(solution);
 
+        Id = id;
         Title = title;
         Description = description;
         StartPosition = startPosition;

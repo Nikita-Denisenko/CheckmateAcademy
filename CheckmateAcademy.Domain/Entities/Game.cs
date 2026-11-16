@@ -54,10 +54,12 @@ namespace CheckmateAcademy.Domain.Entities
         private static ChessBoardSetup CreateDefaultSetup()
         {
             var pieces = StartPositionInitializer.InitializePieces()
-                .Select(piece => new PieceSetup(
-                    GetPieceType(piece),
-                    piece.Color,
-                    piece.Position));
+                .Select(piece => new PieceSetup
+                {
+                    Type = GetPieceType(piece),
+                    Color = piece.Color,
+                    Position = piece.Position
+                });
 
             return new ChessBoardSetup(pieces);
         }

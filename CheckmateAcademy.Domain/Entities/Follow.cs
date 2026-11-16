@@ -28,5 +28,24 @@ namespace CheckmateAcademy.Domain.Entities
             TargetId = targetId;
             CreatedAt = DateTime.UtcNow;
         }
+
+        public Follow(
+            int id,
+            int followerId,
+            int targetId,
+            DateTime createdAt)
+        {
+            DomainValidation.PositiveId(id, nameof(id));
+            DomainValidation.PositiveId(followerId, nameof(followerId));
+            DomainValidation.PositiveId(targetId, nameof(targetId));
+            if (followerId == targetId)
+                throw new ArgumentException(
+                    "User cannot follow themselves.",
+                    nameof(targetId));
+            Id = id;
+            FollowerId = followerId;
+            TargetId = targetId;
+            CreatedAt = createdAt;
+        }
     }
 }
