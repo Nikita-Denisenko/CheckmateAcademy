@@ -1,12 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CheckmateAcademy.Application.Interfaces.Repositories;
+using CheckmateAcademy.Domain.Entities;
 
 namespace CheckmateAcademy.Infrastructure.Repositories
 {
-    internal class FollowRepository
+    public class FollowRepository : IFollowRepository
     {
+        public Task CreateFollowAsync(Follow follow, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteFollowAsync(int id, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Follow>> GetAllFollowsAsync(CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Follow?> GetFollowByIdAsync(int id, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateFollowAsync(Follow follow, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

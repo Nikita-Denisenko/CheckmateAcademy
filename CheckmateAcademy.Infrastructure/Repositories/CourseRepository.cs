@@ -1,12 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CheckmateAcademy.Application.Interfaces.Repositories;
+using CheckmateAcademy.Domain.Entities;
 
 namespace CheckmateAcademy.Infrastructure.Repositories
 {
-    internal class CourseRepository
+    public class CourseRepository : ICourseRepository
     {
+        public Task CreateCourseAsync(Course course, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteCourseAsync(int id, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<Course>> GetAllCoursesAsync(CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Course?> GetCourseByIdAsync(int id, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateCourseAsync(Course course, CancellationToken ct)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
