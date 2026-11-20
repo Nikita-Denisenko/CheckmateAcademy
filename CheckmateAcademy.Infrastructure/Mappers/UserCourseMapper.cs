@@ -5,7 +5,7 @@ namespace CheckmateAcademy.Infrastructure.Mappers
 {
     public static class UserCourseMapper
     {
-        public static CourseProgressData MapToDataModel(UserCourse userCourse)
+        public static CourseProgressData ToData(UserCourse userCourse)
         {
             ArgumentNullException.ThrowIfNull(userCourse);
 
@@ -16,7 +16,7 @@ namespace CheckmateAcademy.Infrastructure.Mappers
             );
         }
 
-        public static UserCourse MapToDomainEntity(CourseProgressData data)
+        public static UserCourse ToDomain(CourseProgressData data)
         {
             ArgumentNullException.ThrowIfNull(data);
 

@@ -1,33 +1,128 @@
-﻿using CheckmateAcademy.Application.Interfaces.Repositories;
+﻿using CheckmateAcademy.Application.DataModels;
+using CheckmateAcademy.Application.Interfaces.Repositories;
 using CheckmateAcademy.Domain.Entities;
+using CheckmateAcademy.Infrastructure.Configuration;
+using CheckmateAcademy.Infrastructure.Mappers;
+using System.Text.Json;
 
 namespace CheckmateAcademy.Infrastructure.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public Task CreateUserAsync(User user, CancellationToken ct)
+        private readonly StorageOptions _storageOptions;
+
+        private static readonly JsonSerializerOptions JsonOptions = new()
         {
-            throw new NotImplementedException();
+            PropertyNameCaseInsensitive = true
+        };
+
+        public UserRepository(StorageOptions storageOptions)
+        {
+            _storageOptions = storageOptions
+                ?? throw new ArgumentNullException(nameof(storageOptions));
         }
 
-        public Task<User?> GetUserByIdAsync(int id, CancellationToken ct)
+        public async Task CreateUserAsync(User user, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            EnsureFileExists();
+
+            var userData = UserMapper.ToData(user);
+            var json = JsonSerializer.Serialize(userData, JsonOptions);
+
+            await File.AppendAllTextAsync(
+                _storageOptions.UsersFilePath,
+                json + Environment.NewLine,
+                ct);
         }
 
-        public Task<List<User>> GetAllUsersAsync(CancellationToken ct)
+        public async Task<User?> GetUserByIdAsync(int id, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            var users = await GetAllUsersAsync(ct);
+
+            return users.FirstOrDefault(u => u.Id == id);
         }
 
-        public Task UpdateUserAsync(User user, CancellationToken ct)
+        public async Task<List<User>> GetAllUsersAsync(CancellationToken ct)
         {
-            throw new NotImplementedException();
+            EnsureFileExists();
+
+            var lines = await File.ReadAllLinesAsync(
+                _storageOptions.UsersFilePath,
+                ct);
+
+            var users = new List<User>();
+
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                var userData = JsonSerializer.Deserialize<UserData>(
+                    line,
+                    JsonOptions);
+
+                if (userData is null)
+                    continue;
+
+                users.Add(UserMapper.ToDomain(userData));
+            }
+
+            return users;
         }
 
-        public Task DeleteUserAsync(int id, CancellationToken ct)
+        public async Task UpdateUserAsync(User user, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            var users = await GetAllUsersAsync(ct);
+
+            var index = users.FindIndex(u => u.Id == user.Id);
+
+            if (index == -1)
+                return;
+
+            users[index] = user;
+
+            await WriteUsersAsync(users, ct);
+        }
+
+        public async Task DeleteUserAsync(int id, CancellationToken ct)
+        {
+            var users = await GetAllUsersAsync(ct);
+
+            var removedCount = users.RemoveAll(u => u.Id == id);
+
+            if (removedCount == 0)
+                return;
+
+            await WriteUsersAsync(users, ct);
+        }
+
+        private async Task WriteUsersAsync(
+            IEnumerable<User> users,
+            CancellationToken ct)
+        {
+            var lines = users.Select(user =>
+                JsonSerializer.Serialize(
+                    UserMapper.ToData(user),
+                    JsonOptions));
+
+            await File.WriteAllLinesAsync(
+                _storageOptions.UsersFilePath,
+                lines,
+                ct);
+        }
+
+        private void EnsureFileExists()
+        {
+            var filePath = _storageOptions.UsersFilePath;
+            var directory = Path.GetDirectoryName(filePath);
+
+            if (!string.IsNullOrEmpty(directory))
+                Directory.CreateDirectory(directory);
+
+            if (!File.Exists(filePath))
+            {
+                using var stream = File.Create(filePath);
+            }
         }
     }
 }

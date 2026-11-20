@@ -17,4 +17,5 @@ public sealed record PieceSetup
     public PieceType Type { get; init; }
     public Color Color { get; init; }
     public BoardPosition Position { get; init; }
+    public bool HasMoved { get; init; }
 }

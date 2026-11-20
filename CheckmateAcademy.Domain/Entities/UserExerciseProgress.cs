@@ -25,6 +25,36 @@ public class UserExerciseProgress
         CurrentBoard = null!;
     }
 
+    public static UserExerciseProgress Restore(
+        int id,
+        int userId,
+        Exercise exercise,
+        ChessBoard currentBoard,
+        int attemptsCount,
+        ExerciseProgressStatus status,
+        DateTime startedAt,
+        DateTime? completedAt)
+    {
+        ArgumentNullException.ThrowIfNull(exercise);
+        ArgumentNullException.ThrowIfNull(currentBoard);
+
+        if (attemptsCount < 1)
+            throw new ArgumentOutOfRangeException(nameof(attemptsCount));
+
+        return new UserExerciseProgress
+        {
+            Id = id,
+            UserId = userId,
+            ExerciseId = exercise.Id,
+            Exercise = exercise,
+            CurrentBoard = currentBoard,
+            AttemptsCount = attemptsCount,
+            Status = status,
+            StartedAt = startedAt,
+            CompletedAt = completedAt
+        };
+    }
+
     public UserExerciseProgress(int userId, Exercise exercise)
     {
         ArgumentNullException.ThrowIfNull(exercise);

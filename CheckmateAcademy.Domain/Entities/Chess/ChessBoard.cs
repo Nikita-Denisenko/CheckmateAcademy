@@ -23,9 +23,62 @@ namespace CheckmateAcademy.Domain.Entities.Chess
             ArgumentNullException.ThrowIfNull(setup);
 
             _pieces = setup.Pieces
-                .Select(CreatePiece)
+                .Select(pieceSetup =>
+                {
+                    Piece piece = CreatePiece(pieceSetup);
+
+                    piece.RestoreState(
+                        pieceSetup.Position,
+                        pieceSetup.HasMoved);
+
+                    return piece;
+                })
                 .ToList();
         }
+
+        public static ChessBoard Restore(
+            ChessBoardSetup setup,
+            BoardPosition? lastMoveFrom,
+            BoardPosition? lastMoveTo,
+            MoveType? lastMoveType)
+        {
+            ArgumentNullException.ThrowIfNull(setup);
+
+            var board = new ChessBoard(setup);
+
+            if (lastMoveFrom == null &&
+                lastMoveTo == null &&
+                lastMoveType == null)
+            {
+                return board;
+            }
+
+            if (lastMoveFrom == null ||
+                lastMoveTo == null ||
+                lastMoveType == null)
+            {
+                throw new ArgumentException(
+                    "Last move data is incomplete.");
+            }
+
+            Piece? piece = board._pieces.FirstOrDefault(
+                p => p.Position == lastMoveTo.Value);
+
+            if (piece == null)
+            {
+                throw new ArgumentException(
+                    "Last move piece was not found on the board.");
+            }
+
+            board.LastMove = new Move(
+                piece,
+                lastMoveFrom.Value,
+                lastMoveTo.Value,
+                lastMoveType.Value);
+
+            return board;
+        }
+
 
         private static Piece CreatePiece(PieceSetup setup)
         {

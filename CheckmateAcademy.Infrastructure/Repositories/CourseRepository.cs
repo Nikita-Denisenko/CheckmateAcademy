@@ -1,33 +1,137 @@
-﻿using CheckmateAcademy.Application.Interfaces.Repositories;
+﻿using CheckmateAcademy.Application.DataModels;
+using CheckmateAcademy.Application.Interfaces.Repositories;
 using CheckmateAcademy.Domain.Entities;
+using CheckmateAcademy.Infrastructure.Configuration;
+using CheckmateAcademy.Infrastructure.Mappers;
+using System.Text.Json;
 
 namespace CheckmateAcademy.Infrastructure.Repositories
 {
     public class CourseRepository : ICourseRepository
     {
-        public Task CreateCourseAsync(Course course, CancellationToken ct)
+        private readonly StorageOptions _storageOptions;
+
+        private static readonly JsonSerializerOptions JsonOptions = new()
         {
-            throw new NotImplementedException();
+            PropertyNameCaseInsensitive = true
+        };
+
+        public CourseRepository(StorageOptions storageOptions)
+        {
+            _storageOptions = storageOptions
+                ?? throw new ArgumentNullException(nameof(storageOptions));
         }
 
-        public Task DeleteCourseAsync(int id, CancellationToken ct)
+        public async Task CreateCourseAsync(
+            Course course,
+            CancellationToken ct)
         {
-            throw new NotImplementedException();
+            EnsureFileExists();
+
+            var courseData = CourseMapper.ToData(course);
+            var json = JsonSerializer.Serialize(courseData, JsonOptions);
+
+            await File.AppendAllTextAsync(
+                _storageOptions.CoursesFilePath,
+                json + Environment.NewLine,
+                ct);
         }
 
-        public Task<List<Course>> GetAllCoursesAsync(CancellationToken ct)
+        public async Task DeleteCourseAsync(
+            int id,
+            CancellationToken ct)
         {
-            throw new NotImplementedException();
+            var courses = await GetAllCoursesAsync(ct);
+
+            var removedCount = courses.RemoveAll(c => c.Id == id);
+
+            if (removedCount == 0)
+                return;
+
+            await WriteCoursesAsync(courses, ct);
         }
 
-        public Task<Course?> GetCourseByIdAsync(int id, CancellationToken ct)
+        public async Task<List<Course>> GetAllCoursesAsync(
+            CancellationToken ct)
         {
-            throw new NotImplementedException();
+            EnsureFileExists();
+
+            var lines = await File.ReadAllLinesAsync(
+                _storageOptions.CoursesFilePath,
+                ct);
+
+            var courses = new List<Course>();
+
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                var courseData = JsonSerializer.Deserialize<CourseData>(
+                    line,
+                    JsonOptions);
+
+                if (courseData is null)
+                    continue;
+
+                courses.Add(CourseMapper.ToDomain(courseData));
+            }
+
+            return courses;
         }
 
-        public Task UpdateCourseAsync(Course course, CancellationToken ct)
+        public async Task<Course?> GetCourseByIdAsync(
+            int id,
+            CancellationToken ct)
         {
-            throw new NotImplementedException();
+            var courses = await GetAllCoursesAsync(ct);
+
+            return courses.FirstOrDefault(c => c.Id == id);
+        }
+
+        public async Task UpdateCourseAsync(
+            Course course,
+            CancellationToken ct)
+        {
+            var courses = await GetAllCoursesAsync(ct);
+
+            var index = courses.FindIndex(c => c.Id == course.Id);
+
+            if (index == -1)
+                return;
+
+            courses[index] = course;
+
+            await WriteCoursesAsync(courses, ct);
+        }
+
+        private async Task WriteCoursesAsync(
+            IEnumerable<Course> courses,
+            CancellationToken ct)
+        {
+            var lines = courses.Select(course =>
+                JsonSerializer.Serialize(
+                    CourseMapper.ToData(course),
+                    JsonOptions));
+
+            await File.WriteAllLinesAsync(
+                _storageOptions.CoursesFilePath,
+                lines,
+                ct);
+        }
+
+        private void EnsureFileExists()
+        {
+            var filePath = _storageOptions.CoursesFilePath;
+            var directory = Path.GetDirectoryName(filePath);
+
+            if (!string.IsNullOrEmpty(directory))
+                Directory.CreateDirectory(directory);
+
+            if (!File.Exists(filePath))
+            {
+                using var stream = File.Create(filePath);
+            }
         }
     }
 }

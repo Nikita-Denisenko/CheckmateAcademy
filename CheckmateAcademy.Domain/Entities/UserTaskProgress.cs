@@ -36,6 +36,36 @@ public class UserTaskProgress
         StartedAt = DateTime.UtcNow;
     }
 
+    public static UserTaskProgress Restore(
+        int id,
+        int userId,
+        ChessTask task,
+        ChessBoard currentBoard,
+        int attemptsCount,
+        TaskProgressStatus status,
+        DateTime startedAt,
+        DateTime? completedAt)
+    {
+        ArgumentNullException.ThrowIfNull(task);
+        ArgumentNullException.ThrowIfNull(currentBoard);
+
+        if (attemptsCount < 1)
+            throw new ArgumentOutOfRangeException(nameof(attemptsCount));
+
+        return new UserTaskProgress
+        {
+            Id = id,
+            UserId = userId,
+            TaskId = task.Id,
+            Task = task,
+            CurrentBoard = currentBoard,
+            AttemptsCount = attemptsCount,
+            Status = status,
+            StartedAt = startedAt,
+            CompletedAt = completedAt
+        };
+    }
+
     public void StartNewAttempt()
     {
         CurrentBoard = new ChessBoard(Task.StartPosition);

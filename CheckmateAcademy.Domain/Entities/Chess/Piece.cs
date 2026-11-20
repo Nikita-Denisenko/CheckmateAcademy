@@ -28,6 +28,14 @@ namespace CheckmateAcademy.Domain.Entities.Chess
             Position = position;
         }
 
+        public void RestoreState(
+            BoardPosition position,
+            bool hasMoved)
+        {
+            Position = position;
+            HasMoved = hasMoved;
+        }
+
         public abstract bool IsValidMove(BoardPosition newPosition);
 
         public virtual bool CanJumpOverPieces => false;

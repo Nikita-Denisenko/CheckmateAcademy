@@ -1,4 +1,5 @@
-﻿namespace CheckmateAcademy.Application.DataModels
+﻿
+namespace CheckmateAcademy.Application.DataModels
 {
     public class GameMoveData
     {
@@ -7,5 +8,8 @@
         public int ToRow { get; set; }
         public int ToColumn { get; set; }
         public string Type { get; set; } = null!;
+        public string PieceType { get; set; } = null!;
+        public string PieceColor { get; set; } = null!;
     }
 }
+

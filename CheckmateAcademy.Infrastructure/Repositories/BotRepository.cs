@@ -11,17 +11,28 @@ namespace CheckmateAcademy.Infrastructure.Repositories
     {
         private readonly StorageOptions _storageOptions;
 
+        private static readonly JsonSerializerOptions JsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
         public BotRepository(StorageOptions storageOptions)
         {
-            _storageOptions = storageOptions;
+            _storageOptions = storageOptions
+                ?? throw new ArgumentNullException(nameof(storageOptions));
         }
 
         public async Task CreateBotAsync(Bot bot, CancellationToken ct)
         {
-            var botData = BotMapper.ToData(bot);
+            EnsureFileExists();
 
-            var botDataString = JsonSerializer.Serialize(botData);
-            await File.AppendAllTextAsync(_storageOptions.BotsFilePath, botDataString + Environment.NewLine, ct);
+            var botData = BotMapper.ToData(bot);
+            var json = JsonSerializer.Serialize(botData, JsonOptions);
+
+            await File.AppendAllTextAsync(
+                _storageOptions.BotsFilePath,
+                json + Environment.NewLine,
+                ct);
         }
 
         public async Task DeleteBotAsync(int id, CancellationToken ct)
@@ -33,22 +44,35 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
             bots.Remove(bot);
 
-            await File.WriteAllLinesAsync(_storageOptions.BotsFilePath, bots
-                .Select(b => JsonSerializer.Serialize(BotMapper.ToData(b))), ct);
+            await WriteBotsAsync(bots, ct);
         }
 
         public async Task<List<Bot>> GetAllBotsAsync(CancellationToken ct)
         {
-            if (!File.Exists(_storageOptions.BotsFilePath))
-                return new List<Bot>();
+            EnsureFileExists();
 
-            var botLines = await File.ReadAllLinesAsync(_storageOptions.BotsFilePath, ct);
+            var lines = await File.ReadAllLinesAsync(
+                _storageOptions.BotsFilePath,
+                ct);
 
-            return botLines
-                .Select(line => JsonSerializer.Deserialize<BotData>(line))
-                .Where(botData => botData != null)
-                .Select(botData => BotMapper.ToDomain(botData!))
-                .ToList();
+            var bots = new List<Bot>();
+
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                var botData = JsonSerializer.Deserialize<BotData>(
+                    line,
+                    JsonOptions);
+
+                if (botData is null)
+                    continue;
+
+                bots.Add(BotMapper.ToDomain(botData));
+            }
+
+            return bots;
         }
 
         public async Task<Bot?> GetBotByIdAsync(int id, CancellationToken ct)
@@ -69,9 +93,36 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
             bots[index] = bot;
 
-            var botLines = bots.Select(b => JsonSerializer.Serialize(BotMapper.ToData(b)));
+            await WriteBotsAsync(bots, ct);
+        }
 
-            await File.WriteAllLinesAsync(_storageOptions.BotsFilePath, botLines, ct);
+        private async Task WriteBotsAsync(
+            IEnumerable<Bot> bots,
+            CancellationToken ct)
+        {
+            var lines = bots.Select(bot =>
+                JsonSerializer.Serialize(
+                    BotMapper.ToData(bot),
+                    JsonOptions));
+
+            await File.WriteAllLinesAsync(
+                _storageOptions.BotsFilePath,
+                lines,
+                ct);
+        }
+
+        private void EnsureFileExists()
+        {
+            var filePath = _storageOptions.BotsFilePath;
+            var directory = Path.GetDirectoryName(filePath);
+
+            if (!string.IsNullOrEmpty(directory))
+                Directory.CreateDirectory(directory);
+
+            if (!File.Exists(filePath))
+            {
+                using var stream = File.Create(filePath);
+            }
         }
     }
 }
