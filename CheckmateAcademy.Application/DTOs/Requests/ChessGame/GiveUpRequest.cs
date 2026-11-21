@@ -1,4 +1,4 @@
-﻿namespace CheckmateAcademy.Application.DTOs.Responses.ChessGame
+﻿namespace CheckmateAcademy.Application.DTOs.Requests.ChessGame
 {
     public record GiveUpRequest
     {
