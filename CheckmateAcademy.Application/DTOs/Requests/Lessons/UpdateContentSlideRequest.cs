@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CheckmateAcademy.Application.DTOs.Requests.Lessons.Blocks;
 
 namespace CheckmateAcademy.Application.DTOs.Requests.Lessons
 {
-    internal class UpdateContentSlideRequest
+    public record UpdateContentSlideRequest
     {
+        public string Title { get; set; } = string.Empty;
+        public int Order { get; set; }
+        public List<UpdateContentBlockRequest> Blocks { get; set; } = [];
     }
 }

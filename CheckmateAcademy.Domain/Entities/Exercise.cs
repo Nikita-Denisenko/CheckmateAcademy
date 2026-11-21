@@ -1,5 +1,4 @@
 ﻿using CheckmateAcademy.Domain.ValueObjects.Game;
-using CheckmateAcademy.Domain.ValueObjects.Tasks;
 
 namespace CheckmateAcademy.Domain.Entities;
 

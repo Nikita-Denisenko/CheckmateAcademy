@@ -1,7 +1,6 @@
 ﻿using CheckmateAcademy.Domain.Enums;
-using CheckmateAcademy.Domain.ValueObjects.Game;
 
-namespace CheckmateAcademy.Domain.ValueObjects.Tasks;
+namespace CheckmateAcademy.Domain.ValueObjects.Game;
 
 public sealed record ExerciseSolutionMove
 {

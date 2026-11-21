@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CheckmateAcademy.Application.DTOs.Requests.Lessons.Slides;
 
 namespace CheckmateAcademy.Application.DTOs.Requests.Lessons
 {
-    internal class CreateLessonRequest
+    public record CreateLessonRequest
     {
+        public string Title { get; set; } = string.Empty;
+        public List<CreateLessonSlideRequest> Slides { get; set; } = [];
     }
 }

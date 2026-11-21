@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DTOs.Requests.Lessons
+﻿namespace CheckmateAcademy.Application.DTOs.Requests.Lessons
 {
-    internal class UpdateExerciseSlideRequest
+    public record UpdateExerciseSlideRequest
     {
+        public string Title { get; set; } = string.Empty;
+        public int Order { get; set; }
+        public UpdateExerciseRequest Exercise { get; set; } = null!;
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CheckmateAcademy.Application.DTOs.Requests.Lessons
+namespace CheckmateAcademy.Application.DTOs.Responses.Chess
 {
-    internal class CreateSlideRequest
+    internal class PieceSetupResponse
     {
     }
 }
