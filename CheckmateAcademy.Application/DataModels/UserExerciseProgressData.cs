@@ -2,7 +2,6 @@
 {
     public class UserExerciseProgressData
     {
-        public int Id { get; set; }
         public int UserId { get; set; }
         public int ExerciseId { get; set; }
         public List<PieceSetupData> CurrentBoard { get; set; } = [];

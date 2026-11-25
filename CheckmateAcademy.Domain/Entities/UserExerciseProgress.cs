@@ -5,7 +5,6 @@ namespace CheckmateAcademy.Domain.Entities;
 
 public class UserExerciseProgress
 {
-    public int Id { get; private set; }
     public int UserId { get; private set; }
     public int ExerciseId { get; private set; }
     public Exercise Exercise { get; private set; }
@@ -26,7 +25,6 @@ public class UserExerciseProgress
     }
 
     public static UserExerciseProgress Restore(
-        int id,
         int userId,
         Exercise exercise,
         ChessBoard currentBoard,
@@ -43,7 +41,6 @@ public class UserExerciseProgress
 
         return new UserExerciseProgress
         {
-            Id = id,
             UserId = userId,
             ExerciseId = exercise.Id,
             Exercise = exercise,

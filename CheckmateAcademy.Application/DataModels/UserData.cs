@@ -12,6 +12,7 @@
         public int? RusRating { get; init; }
         public string Email { get; init; }
         public string PasswordHash { get; init; }
+        public string Role { get; init; }
 
         public UserData(
             int id,
@@ -23,7 +24,8 @@
             int? fideRating,
             int? rusRating,
             string email,
-            string passwordHash)
+            string passwordHash,
+            string role)
         {
             Id = id;
             Name = name;
@@ -35,6 +37,7 @@
             RusRating = rusRating;
             Email = email;
             PasswordHash = passwordHash;
+            Role = role;
         }
     }
 }

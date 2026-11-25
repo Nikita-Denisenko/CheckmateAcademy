@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DTOs.Requests.Games
+﻿namespace CheckmateAcademy.Application.DTOs.Requests.Games
 {
-    internal class GetGamesRequest
+    public record GetGamesRequest
     {
+        public int UserId { get; init; }
+        public int Page { get; init; } = 1;
+        public int Size { get; init; } = 10;
     }
 }

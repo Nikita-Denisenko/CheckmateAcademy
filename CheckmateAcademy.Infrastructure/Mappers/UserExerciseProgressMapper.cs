@@ -15,7 +15,6 @@ namespace CheckmateAcademy.Infrastructure.Mappers
 
             return new UserExerciseProgressData
             {
-                Id = progress.Id,
                 UserId = progress.UserId,
                 ExerciseId = progress.ExerciseId,
 
@@ -135,7 +134,6 @@ namespace CheckmateAcademy.Infrastructure.Mappers
                     ignoreCase: true);
 
             return UserExerciseProgress.Restore(
-                data.Id,
                 data.UserId,
                 exercise,
                 board,

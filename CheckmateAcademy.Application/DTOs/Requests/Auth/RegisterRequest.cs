@@ -7,8 +7,15 @@
         public DateTime BirthDate { get; }
         public string Email { get; }
         public string Password { get; }
+        public string? SecretKey { get; init; }
 
-        public RegisterRequest(string name, string surname, DateTime birthDate, string email, string password)
+        public RegisterRequest(
+            string name, 
+            string surname, 
+            DateTime birthDate, 
+            string email, 
+            string password,
+            string? secretKey = null)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Name cannot be null or empty.", nameof(name));
@@ -30,6 +37,7 @@
             BirthDate = birthDate;
             Email = email;
             Password = password;
+            SecretKey = secretKey;
         }
     }
 }

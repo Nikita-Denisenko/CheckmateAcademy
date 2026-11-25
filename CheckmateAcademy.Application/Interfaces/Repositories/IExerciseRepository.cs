@@ -9,5 +9,6 @@ namespace CheckmateAcademy.Application.Interfaces.Repositories
         public Task<List<Exercise>> GetAllExercisesAsync(CancellationToken ct);
         public Task UpdateExerciseAsync(Exercise exercise, CancellationToken ct);
         public Task DeleteExerciseAsync(int id, CancellationToken ct);
+        public Task<int> GetNextIdAsync(CancellationToken ct);
     }
 }

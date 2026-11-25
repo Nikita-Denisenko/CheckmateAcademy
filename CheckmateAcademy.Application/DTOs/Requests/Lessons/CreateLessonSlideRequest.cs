@@ -2,6 +2,6 @@
 
 public abstract record CreateLessonSlideRequest
 {
-    public string Title { get; set; } = string.Empty;
-    public int Order { get; set; }
+    public string Title { get; init; } = string.Empty;
+    public int Order { get; init; }
 }

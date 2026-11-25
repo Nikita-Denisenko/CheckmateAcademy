@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DTOs.Requests.Courses
+﻿namespace CheckmateAcademy.Application.DTOs.Requests.Courses
 {
-    internal class UpdateCourseInfoRequest
+    public record UpdateCourseInfoRequest
     {
+        public int CourseId { get; init; }
+        public string Name { get; init; } = string.Empty;
+        public string Description { get; init; } = string.Empty;
     }
 }

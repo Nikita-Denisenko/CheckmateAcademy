@@ -9,5 +9,6 @@ namespace CheckmateAcademy.Application.Interfaces.Repositories
         public Task<List<Game>> GetAllGamesAsync(CancellationToken ct);
         public Task UpdateGameAsync(Game game, CancellationToken ct);
         public Task DeleteGameAsync(int id, CancellationToken ct);
+        public Task<int> GetNextIdAsync(CancellationToken ct);
     }
 }

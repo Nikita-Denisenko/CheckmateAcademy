@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using System.Windows.Controls;
 using CheckmateAcademy.Presentation.Views;
 
 namespace CheckmateAcademy.Presentation.ViewModels
@@ -58,38 +57,30 @@ namespace CheckmateAcademy.Presentation.ViewModels
             if (parameter is not string page)
                 return;
 
-            switch (page)
+            var view = page switch
             {
-                case "Home":
-                    PageTitle = "Главная";
-                    PageSubtitle = "Твой путь к шахматному мастерству";
-                    CurrentView = new HomeView();
-                    break;
+                "Home" => (object)new HomeView(),
+                "Courses" => new CoursesView(),
+                "Tasks" => new TasksView(),
+                "Bot" => new BotView(),
+                "Study" => new StudyView(),
+                _ => null
+            };
 
-                case "Courses":
-                    PageTitle = "Курсы";
-                    PageSubtitle = "Изучай теорию и закрепляй знания на практике";
-                    CurrentView = new CoursesView();
-                    break;
+            if (view is null)
+                return;
 
-                case "Tasks":
-                    PageTitle = "Задачи";
-                    PageSubtitle = "Развивай тактическое мышление";
-                    CurrentView = new TasksView();
-                    break;
+            (PageTitle, PageSubtitle) = page switch
+            {
+                "Home" => ("Главная", "Твой путь к шахматному мастерству"),
+                "Courses" => ("Курсы", "Изучай теорию и закрепляй знания на практике"),
+                "Tasks" => ("Задачи", "Развивай тактическое мышление"),
+                "Bot" => ("Игра с ботом", "Тренируйся против компьютерных соперников"),
+                "Study" => ("Анализ партий", "Исследуй позиции и разбирай варианты ходов"),
+                _ => (PageTitle, PageSubtitle)
+            };
 
-                case "Bot":
-                    PageTitle = "Игра с ботом";
-                    PageSubtitle = "Тренируйся против компьютерных соперников";
-                    CurrentView = new BotView();
-                    break;
-
-                case "Study":
-                    PageTitle = "Анализ партий";
-                    PageSubtitle = "Исследуй позиции и разбирай варианты ходов";
-                    CurrentView = new StudyView();
-                    break;
-            }
+            CurrentView = view;
         }
 
         private void OnPropertyChanged(
@@ -112,7 +103,7 @@ namespace CheckmateAcademy.Presentation.ViewModels
             Action<object?> execute,
             Predicate<object?>? canExecute = null)
         {
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 

@@ -2,7 +2,7 @@
 using CheckmateAcademy.Domain.Entities;
 using CheckmateAcademy.Domain.Enums;
 using CheckmateAcademy.Domain.ValueObjects.Game;
-using CheckmateAcademy.Domain.ValueObjects.Tasks;
+
 
 namespace CheckmateAcademy.Infrastructure.Mappers;
 

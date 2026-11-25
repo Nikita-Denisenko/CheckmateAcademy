@@ -2,19 +2,19 @@
 {
     public record LoginRequest
     {
-        public string Email { get; init; }
-        public string PasswordHash { get; init; }
+        public string Email { get; }
+        public string Password { get; }
 
-        public LoginRequest(string email, string passwordHash)
+        public LoginRequest(string email, string password)
         {
             if (string.IsNullOrWhiteSpace(email))
                 throw new ArgumentException("Email cannot be null or empty.", nameof(email));
 
-            if (string.IsNullOrWhiteSpace(passwordHash))
-                throw new ArgumentException("Password hash cannot be null or empty.", nameof(passwordHash));
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Password cannot be null or empty.", nameof(password));
 
             Email = email;
-            PasswordHash = passwordHash;
+            Password = password;
         }
     }
 }

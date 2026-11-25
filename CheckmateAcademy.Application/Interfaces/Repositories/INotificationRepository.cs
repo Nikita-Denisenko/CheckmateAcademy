@@ -9,5 +9,6 @@ namespace CheckmateAcademy.Application.Interfaces.Repositories
         public Task<List<Notification>> GetAllNotificationsAsync(CancellationToken ct);
         public Task UpdateNotificationAsync(Notification notification, CancellationToken ct);
         public Task DeleteNotificationAsync(int id, CancellationToken ct);
+        public Task<int> GetNextIdAsync(CancellationToken ct);
     }
 }

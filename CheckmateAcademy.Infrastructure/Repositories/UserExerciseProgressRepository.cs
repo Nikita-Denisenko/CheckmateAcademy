@@ -21,8 +21,11 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             StorageOptions storageOptions,
             IExerciseRepository exerciseRepository)
         {
-            _storageOptions = storageOptions;
-            _exerciseRepository = exerciseRepository;
+            _storageOptions = storageOptions
+                ?? throw new ArgumentNullException(nameof(storageOptions));
+
+            _exerciseRepository = exerciseRepository
+                ?? throw new ArgumentNullException(nameof(exerciseRepository));
         }
 
         public async Task CreateUserExerciseProgressAsync(
@@ -31,26 +34,37 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             ArgumentNullException.ThrowIfNull(userExerciseProgress);
 
-            EnsureFileExists();
+            var progresses = await ReadAllDataAsync(ct);
 
-            var data = UserExerciseProgressMapper.ToData(
-                userExerciseProgress);
+            bool alreadyExists = progresses.Any(progress =>
+                progress.UserId == userExerciseProgress.UserId &&
+                progress.ExerciseId == userExerciseProgress.ExerciseId);
 
-            string json = JsonSerializer.Serialize(data, JsonOptions);
+            if (alreadyExists)
+            {
+                throw new InvalidOperationException(
+                    "User exercise progress already exists.");
+            }
 
-            await File.AppendAllTextAsync(
-                _storageOptions.UsersExercisesProgressFilePath,
-                json + Environment.NewLine,
-                ct);
+            progresses.Add(
+                UserExerciseProgressMapper.ToData(userExerciseProgress));
+
+            await WriteAllDataAsync(progresses, ct);
         }
 
         public async Task DeleteUserExerciseProgressAsync(
-            int id,
+            int userId,
+            int exerciseId,
             CancellationToken ct)
         {
             var progresses = await ReadAllDataAsync(ct);
 
-            progresses.RemoveAll(progress => progress.Id == id);
+            int removedCount = progresses.RemoveAll(progress =>
+                progress.UserId == userId &&
+                progress.ExerciseId == exerciseId);
+
+            if (removedCount == 0)
+                return;
 
             await WriteAllDataAsync(progresses, ct);
         }
@@ -82,13 +96,16 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         }
 
         public async Task<UserExerciseProgress?>
-            GetUserExerciseProgressByIdAsync(
-                int id,
+            GetUserExerciseProgressAsync(
+                int userId,
+                int exerciseId,
                 CancellationToken ct)
         {
             var progresses = await GetAllUserExerciseProgressesAsync(ct);
 
-            return progresses.FirstOrDefault(progress => progress.Id == id);
+            return progresses.FirstOrDefault(progress =>
+                progress.UserId == userId &&
+                progress.ExerciseId == exerciseId);
         }
 
         public async Task UpdateUserExerciseProgressAsync(
@@ -99,8 +116,9 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
             var progresses = await ReadAllDataAsync(ct);
 
-            int index = progresses.FindIndex(
-                progress => progress.Id == userExerciseProgress.Id);
+            int index = progresses.FindIndex(progress =>
+                progress.UserId == userExerciseProgress.UserId &&
+                progress.ExerciseId == userExerciseProgress.ExerciseId);
 
             if (index == -1)
                 return;

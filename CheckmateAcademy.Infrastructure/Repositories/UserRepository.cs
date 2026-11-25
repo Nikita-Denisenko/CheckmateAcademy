@@ -1,6 +1,7 @@
 ﻿using CheckmateAcademy.Application.DataModels;
 using CheckmateAcademy.Application.Interfaces.Repositories;
 using CheckmateAcademy.Domain.Entities;
+using CheckmateAcademy.Domain.ValueObjects.Profile;
 using CheckmateAcademy.Infrastructure.Configuration;
 using CheckmateAcademy.Infrastructure.Mappers;
 using System.Text.Json;
@@ -123,6 +124,27 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             {
                 using var stream = File.Create(filePath);
             }
+        }
+
+        public async Task<User?> GetUserByEmailAsync(
+            Email email,
+            CancellationToken ct)
+        {
+            ArgumentNullException.ThrowIfNull(email);
+
+            var users = await GetAllUsersAsync(ct);
+
+            return users.FirstOrDefault(user =>
+                string.Equals(
+                    user.Account.Email.Value,
+                    email.Value,
+                    StringComparison.OrdinalIgnoreCase));
+        }
+
+        public async Task<int> GetNextIdAsync(CancellationToken ct)
+        {
+            var entities = await GetAllUsersAsync(ct);
+            return entities.Count == 0 ? 1 : checked(entities.Max(x => x.Id) + 1);
         }
     }
 }

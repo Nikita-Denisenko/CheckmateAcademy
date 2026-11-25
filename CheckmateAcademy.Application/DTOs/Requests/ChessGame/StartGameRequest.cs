@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DTOs.Requests.ChessGame
+﻿namespace CheckmateAcademy.Application.DTOs.Requests.ChessGame
 {
-    internal class StartGameRequest
+    public record StartGameRequest
     {
+        public int UserId { get; init; }
+        public int BotId { get; init; }
+
+        public StartGameRequest(int userId, int botId)
+        {
+            if (userId <= 0)
+                throw new ArgumentException("UserId must be greater than zero.", nameof(userId));
+            if (botId <= 0)
+                throw new ArgumentException("BotId must be greater than zero.", nameof(botId));
+
+            UserId = userId;
+            BotId = botId;
+        }
     }
 }

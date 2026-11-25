@@ -9,5 +9,6 @@ namespace CheckmateAcademy.Application.Interfaces.Repositories
         public Task<List<Lesson>> GetAllLessonsAsync(CancellationToken ct);
         public Task UpdateLessonAsync(Lesson lesson, int courseId, CancellationToken ct);
         public Task DeleteLessonAsync(int id, int courseId, CancellationToken ct);
+        public Task<int> GetNextIdAsync(CancellationToken ct);
     }
 }

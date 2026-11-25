@@ -124,6 +124,12 @@ namespace CheckmateAcademy.Infrastructure.Repositories
                 using var stream = File.Create(filePath);
             }
         }
+
+        public async Task<int> GetNextIdAsync(CancellationToken ct)
+        {
+            var entities = await GetAllGamesAsync(ct);
+            return entities.Count == 0 ? 1 : checked(entities.Max(x => x.Id) + 1);
+        }
     }
 }
 

@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DTOs.Requests.Account
+﻿namespace CheckmateAcademy.Application.DTOs.Requests.Account
 {
-    internal class ChangeEmailRequest
+    public record ChangeEmailRequest
     {
+        public int UserId { get; init; }
+        public string NewEmail { get; init; } = string.Empty;
     }
 }

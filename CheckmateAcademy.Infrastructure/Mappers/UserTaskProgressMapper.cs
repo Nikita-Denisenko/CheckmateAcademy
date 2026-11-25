@@ -15,7 +15,6 @@ namespace CheckmateAcademy.Infrastructure.Mappers
 
             return new UserTaskProgressData
             {
-                Id = progress.Id,
                 UserId = progress.UserId,
                 TaskId = progress.TaskId,
 
@@ -78,7 +77,6 @@ namespace CheckmateAcademy.Infrastructure.Mappers
                 ignoreCase: true);
 
             return UserTaskProgress.Restore(
-                data.Id,
                 data.UserId,
                 task,
                 board,

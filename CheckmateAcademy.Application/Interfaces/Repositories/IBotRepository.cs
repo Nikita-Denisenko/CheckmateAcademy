@@ -9,5 +9,6 @@ namespace CheckmateAcademy.Application.Interfaces.Repositories
         public Task<List<Bot>> GetAllBotsAsync(CancellationToken ct);
         public Task UpdateBotAsync(Bot bot, CancellationToken ct);
         public Task DeleteBotAsync(int id, CancellationToken ct);
+        public Task<int> GetNextIdAsync(CancellationToken ct);
     }
 }

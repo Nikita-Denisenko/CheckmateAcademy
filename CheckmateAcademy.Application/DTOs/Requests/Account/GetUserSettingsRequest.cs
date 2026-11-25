@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CheckmateAcademy.Application.DTOs.Requests.Account
+﻿namespace CheckmateAcademy.Application.DTOs.Requests.Account
 {
-    internal class GetUserSettingsRequest
+    public record GetUserSettingsRequest
     {
+        public int UserId { get; init; }
     }
 }
