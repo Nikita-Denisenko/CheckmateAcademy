@@ -1,6 +1,8 @@
-﻿namespace CheckmateAcademy.Application.Services
+﻿using CheckmateAcademy.Application.Interfaces.Services;
+
+namespace CheckmateAcademy.Application.Services
 {
-    public class NotificationService
+    public class NotificationService : INotificationService
     {
     }
 }
