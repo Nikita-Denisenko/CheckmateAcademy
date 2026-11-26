@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using CheckmateAcademy.Presentation.DependencyInjection;
+using CheckmateAcademy.Presentation.Views.Auth;
 
 namespace CheckmateAcademy.Presentation
 {
@@ -13,6 +14,8 @@ namespace CheckmateAcademy.Presentation
         {
             base.OnStartup(e);
 
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(AppContext.BaseDirectory)
                 .AddJsonFile("appsettings.json", optional: false)
@@ -21,17 +24,30 @@ namespace CheckmateAcademy.Presentation
             var services = new ServiceCollection();
 
             services.AddPresentationServices(configuration);
+            services.AddTransient<AuthWindow>();
             services.AddSingleton<MainWindow>();
 
             _serviceProvider = services.BuildServiceProvider();
 
+            var authWindow = _serviceProvider.GetRequiredService<AuthWindow>();
+
+            if (authWindow.ShowDialog() != true)
+            {
+                Shutdown();
+                return;
+            }
+
             var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
+
+            MainWindow = mainWindow;
+            ShutdownMode = ShutdownMode.OnMainWindowClose;
+
             mainWindow.Show();
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
-            _serviceProvider.Dispose();
+            _serviceProvider?.Dispose();
             base.OnExit(e);
         }
     }

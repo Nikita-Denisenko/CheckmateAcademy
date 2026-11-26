@@ -1,0 +1,303 @@
+﻿<UserControl x:Class="CheckmateAcademy.Presentation.Views.Auth.RegisterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="Transparent"
+             HorizontalAlignment="Stretch">
+
+    <UserControl.Resources>
+        <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#C4D0E2"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,7"/>
+        </Style>
+
+        <Style x:Key="InputFrameStyle" TargetType="Border">
+            <Setter Property="Background" Value="#0D1729"/>
+            <Setter Property="BorderBrush" Value="#344665"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="11"/>
+            <Setter Property="Padding" Value="14,0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="#45618C"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="BorderBrush" Value="#3B82F6"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect BlurRadius="14"
+                                              ShadowDepth="0"
+                                              Color="#2563EB"
+                                              Opacity="0.2"/>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TextInputStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#F8FAFC"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="CaretBrush" Value="#60A5FA"/>
+            <Setter Property="SelectionBrush" Value="#2563EB"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+
+        <Style x:Key="PasswordInputStyle" TargetType="PasswordBox">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="#F8FAFC"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="CaretBrush" Value="#60A5FA"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonSurface"
+                                Background="#2563EB"
+                                CornerRadius="11">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonSurface"
+                                        Property="Background"
+                                        Value="#3B82F6"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="ButtonSurface"
+                                        Property="Opacity"
+                                        Value="0.82"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="ButtonSurface"
+                                        Property="Opacity"
+                                        Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SecondaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#60A5FA"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="ButtonSurface"
+                                Background="Transparent"
+                                CornerRadius="7"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ButtonSurface"
+                                        Property="Background"
+                                        Value="#1A3B82F6"/>
+                                <Setter Property="Foreground"
+                                        Value="#93C5FD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid HorizontalAlignment="Stretch">
+        <Border Width="540"
+                MaxWidth="540"
+                HorizontalAlignment="Center"
+                Background="#111C30"
+                BorderBrush="#293D5D"
+                BorderThickness="1"
+                CornerRadius="23"
+                Padding="30">
+
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="35"
+                                  ShadowDepth="0"
+                                  Color="#000000"
+                                  Opacity="0.28"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <Border Background="#192F50"
+                        BorderBrush="#294D7C"
+                        BorderThickness="1"
+                        CornerRadius="9"
+                        Padding="9,5"
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,15">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="6"
+                                 Height="6"
+                                 Fill="#60A5FA"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,8,0"/>
+                        <TextBlock Text="СОЗДАНИЕ АККАУНТА"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   Foreground="#BFDBFE"/>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Присоединяйся!"
+                           FontSize="27"
+                           FontWeight="Bold"
+                           Foreground="#F8FAFC"/>
+
+                <TextBlock Text="Создай аккаунт и начни свой путь к мастерству"
+                           FontSize="12"
+                           Foreground="#94A3B8"
+                           Margin="0,7,0,20"
+                           TextWrapping="Wrap"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="ИМЯ"
+                                   Style="{StaticResource FieldLabelStyle}"/>
+                        <Border Style="{StaticResource InputFrameStyle}"
+                                Height="48">
+                            <TextBox x:Name="NameTextBox"
+                                     Style="{StaticResource TextInputStyle}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="ФАМИЛИЯ"
+                                   Style="{StaticResource FieldLabelStyle}"/>
+                        <Border Style="{StaticResource InputFrameStyle}"
+                                Height="48">
+                            <TextBox x:Name="SurnameTextBox"
+                                     Style="{StaticResource TextInputStyle}"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="ДАТА РОЖДЕНИЯ"
+                           Style="{StaticResource FieldLabelStyle}"
+                           Margin="0,16,0,7"/>
+
+                <Border Style="{StaticResource InputFrameStyle}"
+                        Height="48">
+                    <Grid>
+                        <TextBox x:Name="BirthDateTextBox"
+                                 Style="{StaticResource TextInputStyle}"
+                                 FontSize="14"
+                                 MaxLength="10"
+                                 Text="ДД.ММ.ГГГГ"
+                                 Foreground="#718096"
+                                 PreviewTextInput="BirthDateTextBox_PreviewTextInput"
+                                 PreviewKeyDown="BirthDateTextBox_PreviewKeyDown"
+                                 DataObject.Pasting="BirthDateTextBox_Pasting"
+                                 GotFocus="BirthDateTextBox_GotFocus"
+                                 LostFocus="BirthDateTextBox_LostFocus"/>
+
+                        <TextBlock Text="▦"
+                                   Foreground="#60A5FA"
+                                   FontSize="19"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False"/>
+                    </Grid>
+                </Border>
+
+                <TextBlock Text="ЭЛЕКТРОННАЯ ПОЧТА"
+                           Style="{StaticResource FieldLabelStyle}"
+                           Margin="0,16,0,7"/>
+
+                <Border Style="{StaticResource InputFrameStyle}"
+                        Height="48">
+                    <TextBox x:Name="EmailTextBox"
+                             Style="{StaticResource TextInputStyle}"/>
+                </Border>
+
+                <Grid Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="ПАРОЛЬ"
+                                   Style="{StaticResource FieldLabelStyle}"/>
+                        <Border Style="{StaticResource InputFrameStyle}"
+                                Height="48">
+                            <PasswordBox x:Name="PasswordBox"
+                                         Style="{StaticResource PasswordInputStyle}"/>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="ПОВТОРИТЕ ПАРОЛЬ"
+                                   Style="{StaticResource FieldLabelStyle}"/>
+                        <Border Style="{StaticResource InputFrameStyle}"
+                                Height="48">
+                            <PasswordBox x:Name="ConfirmPasswordBox"
+                                         Style="{StaticResource PasswordInputStyle}"/>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock x:Name="ErrorMessageTextBlock"
+                           Foreground="#F87171"
+                           FontSize="12"
+                           TextWrapping="Wrap"
+                           Margin="0,10,0,0"
+                           Visibility="Collapsed"/>
+
+                <Button x:Name="RegisterButton"
+                        Content="Создать аккаунт"
+                        Click="RegisterButton_Click"
+                        Style="{StaticResource PrimaryButtonStyle}"
+                        Margin="0,18,0,0"/>
+
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Center"
+                            Margin="0,17,0,0">
+                    <TextBlock Text="Уже есть аккаунт?"
+                               Foreground="#94A3B8"
+                               FontSize="12"
+                               VerticalAlignment="Center"/>
+                    <Button Content="Войти"
+                            Click="LoginButton_Click"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Margin="5,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

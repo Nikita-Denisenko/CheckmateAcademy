@@ -2,10 +2,12 @@
 using CheckmateAcademy.Application.Interfaces.Repositories;
 using CheckmateAcademy.Application.Interfaces.Services;
 using CheckmateAcademy.Application.Services;
+using CheckmateAcademy.Infrastructure.Configuration;
 using CheckmateAcademy.Infrastructure.Repositories;
 using CheckmateAcademy.Presentation.Services.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 
 namespace CheckmateAcademy.Presentation.DependencyInjection
 {
@@ -17,6 +19,9 @@ namespace CheckmateAcademy.Presentation.DependencyInjection
         {
             services.Configure<AuthenticationOptions>(
                 configuration.GetSection("Authentication"));
+
+            services.AddSingleton<StorageOptions>();
+           
 
             services.AddSingleton<IBotRepository, BotRepository>();
             services.AddSingleton<ICourseRepository, CourseRepository>();
@@ -39,7 +44,6 @@ namespace CheckmateAcademy.Presentation.DependencyInjection
             services.AddSingleton<IExerciseService, ExerciseService>();
             services.AddSingleton<IFollowService, FollowService>();
             services.AddSingleton<IGameService, GameService>();
-            services.AddSingleton<ITokenService, JwtTokenService>();
             services.AddSingleton<ILessonService, LessonService>();
             services.AddSingleton<INotificationService, NotificationService>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();

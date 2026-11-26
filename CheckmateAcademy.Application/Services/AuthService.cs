@@ -1,4 +1,5 @@
-﻿using CheckmateAcademy.Application.Configuration;
+﻿
+using CheckmateAcademy.Application.Configuration;
 using CheckmateAcademy.Application.DTOs.Requests.Auth;
 using CheckmateAcademy.Application.DTOs.Responses.Auth;
 using CheckmateAcademy.Application.Interfaces.Repositories;
@@ -14,20 +15,17 @@ namespace CheckmateAcademy.Application.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordHasher;
-        private readonly ITokenService _tokenService;
         private readonly ICurrentUserService _currentUserService;
         private readonly AuthenticationOptions _authenticationOptions;
 
         public AuthService(
             IUserRepository userRepository,
             IPasswordHasher passwordHasher,
-            ITokenService tokenService,
             ICurrentUserService currentUserService,
             IOptions<AuthenticationOptions> authenticationOptions)
         {
             _userRepository = userRepository;
             _passwordHasher = passwordHasher;
-            _tokenService = tokenService;
             _currentUserService = currentUserService;
             _authenticationOptions = authenticationOptions.Value;
         }
@@ -62,13 +60,11 @@ namespace CheckmateAcademy.Application.Services
                 passwordHash,
                 role);
 
-            var token = _tokenService.GenerateToken(user.Id, user.Account.Role);
-
             await _userRepository.CreateUserAsync(user, ct);
 
-            _currentUserService.SetCurrentUser(user.Id);
+            _currentUserService.SetCurrentUser(user.Id, user.Account.Role);
 
-            return new AuthResponse(user.Id, token);
+            return new AuthResponse(user.Id, user.Account.Role);
         }
 
         public async Task<AuthResponse> LoginAsync(
@@ -92,13 +88,9 @@ namespace CheckmateAcademy.Application.Services
                     "Invalid email or password.");
             }
 
-            var token = _tokenService.GenerateToken(
-                user.Id,
-                user.Account.Role);
+            _currentUserService.SetCurrentUser(user.Id, user.Account.Role);
 
-            _currentUserService.SetCurrentUser(user.Id);
-
-            return new AuthResponse(user.Id, token);
+            return new AuthResponse(user.Id, user.Account.Role);
         }
 
         public void Logout()

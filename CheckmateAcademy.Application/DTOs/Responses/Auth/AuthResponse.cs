@@ -1,20 +1,20 @@
-﻿namespace CheckmateAcademy.Application.DTOs.Responses.Auth
+﻿using CheckmateAcademy.Domain.Enums;
+
+namespace CheckmateAcademy.Application.DTOs.Responses.Auth
 {
     public record AuthResponse
     {
         public int UserId { get; init; }
-        public string Token { get; init; }
+        public Role Role { get; init; }
 
-        public AuthResponse(int userId, string token)
+        public AuthResponse(int userId, Role role)
         {
             if (userId <= 0)
                 throw new ArgumentOutOfRangeException(nameof(userId));
 
-            if (string.IsNullOrWhiteSpace(token))
-                throw new ArgumentException("Token cannot be null or empty.", nameof(token));
-
             UserId = userId;
-            Token = token;
+            Role = role;
         }
     }
 }
+

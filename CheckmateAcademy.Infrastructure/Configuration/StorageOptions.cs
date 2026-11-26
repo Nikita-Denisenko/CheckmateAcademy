@@ -2,7 +2,7 @@
 {
     public class StorageOptions
     {
-        public string DataDirectory { get; init; } = Path.Combine(
+        public string DataDirectory { get; set; } = Path.Combine(
             AppContext.BaseDirectory,
             "Data");
 
