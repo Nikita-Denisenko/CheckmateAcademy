@@ -12,6 +12,7 @@
         public int? RusRating { get; init; }
         public int FollowersCount { get; init; }
         public int TotalPoints { get; init; }
+        public int SolvedTasksCount { get; init; }
         public int GamesQuantity { get; init; }
         public int StudiesQuantity { get; init; }
 
@@ -26,6 +27,7 @@
             int? rusRating,
             int followersCount,
             int totalPoints,
+            int solvedTasksCount,
             int gamesQuantity,
             int studiesQuantity)
         {
@@ -47,6 +49,9 @@
             if (totalPoints < 0)
                 throw new ArgumentException("Total points cannot be negative.", nameof(totalPoints));
 
+            if (solvedTasksCount < 0)
+                throw new ArgumentException("Solved tasks count cannot be negative", nameof(solvedTasksCount));
+
             if (gamesQuantity < 0)
                 throw new ArgumentException("Games quantity cannot be negative.", nameof(gamesQuantity));
 
@@ -63,6 +68,7 @@
             RusRating = rusRating;
             FollowersCount = followersCount;
             TotalPoints = totalPoints;
+            SolvedTasksCount = solvedTasksCount;
             GamesQuantity = gamesQuantity;
             StudiesQuantity = studiesQuantity;
         }

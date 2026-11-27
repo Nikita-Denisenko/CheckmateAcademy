@@ -6,7 +6,6 @@ namespace CheckmateAcademy.Domain.Entities
     public class User
     {
         public int Id { get; }
-
         public UserProfile Profile { get; private set; }
         public UserAccount Account { get; private set; }
 
@@ -25,6 +24,16 @@ namespace CheckmateAcademy.Domain.Entities
 
             Id = id;
             Profile = profile;
+            Account = account;
+        }
+
+        public void UpdateProfile(UserProfile profile)
+        {
+            Profile = profile;
+        }
+
+        public void UpdateAccount(UserAccount account)
+        {
             Account = account;
         }
     }

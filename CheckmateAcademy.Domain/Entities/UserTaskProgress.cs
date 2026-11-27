@@ -11,7 +11,6 @@ public class UserTaskProgress
     public ChessBoard CurrentBoard { get; private set; }
     public int AttemptsCount { get; private set; }
     public TaskProgressStatus Status { get; private set; }
-    public DateTime StartedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
 
     protected UserTaskProgress()
@@ -32,7 +31,6 @@ public class UserTaskProgress
 
         AttemptsCount = 1;
         Status = TaskProgressStatus.InProgress;
-        StartedAt = DateTime.UtcNow;
     }
 
     public static UserTaskProgress Restore(
@@ -41,7 +39,6 @@ public class UserTaskProgress
         ChessBoard currentBoard,
         int attemptsCount,
         TaskProgressStatus status,
-        DateTime startedAt,
         DateTime? completedAt)
     {
         ArgumentNullException.ThrowIfNull(task);
@@ -58,7 +55,6 @@ public class UserTaskProgress
             CurrentBoard = currentBoard,
             AttemptsCount = attemptsCount,
             Status = status,
-            StartedAt = startedAt,
             CompletedAt = completedAt
         };
     }

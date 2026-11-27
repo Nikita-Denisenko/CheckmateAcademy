@@ -7,7 +7,6 @@
         public List<PieceSetupData> CurrentBoard { get; set; } = [];
         public string Status { get; set; } = string.Empty;
         public int AttemptsCount { get; set; }
-        public DateTime StartedAt { get; set; }
         public DateTime? CompletedAt { get; set; }
     }
 }

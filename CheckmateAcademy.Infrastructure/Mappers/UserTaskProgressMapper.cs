@@ -31,7 +31,6 @@ namespace CheckmateAcademy.Infrastructure.Mappers
 
                 Status = progress.Status.ToString(),
                 AttemptsCount = progress.AttemptsCount,
-                StartedAt = progress.StartedAt,
                 CompletedAt = progress.CompletedAt
             };
         }
@@ -82,7 +81,6 @@ namespace CheckmateAcademy.Infrastructure.Mappers
                 board,
                 data.AttemptsCount,
                 status,
-                data.StartedAt,
                 data.CompletedAt);
         }
     }
