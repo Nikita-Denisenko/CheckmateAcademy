@@ -14,7 +14,8 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
         };
 
         public ExerciseRepository(StorageOptions storageOptions)
@@ -25,15 +26,11 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
         public async Task CreateExerciseAsync(Exercise exercise, CancellationToken ct)
         {
-            EnsureFileExists();
+            var exercises = await GetAllExercisesAsync(ct);
 
-            var exerciseData = ExerciseMapper.ToData(exercise);
-            var json = JsonSerializer.Serialize(exerciseData, JsonOptions);
+            exercises.Add(exercise);
 
-            await File.AppendAllTextAsync(
-                _storageOptions.ExercisesFilePath,
-                json + Environment.NewLine,
-                ct);
+            await WriteExercisesAsync(exercises, ct);
         }
 
         public async Task DeleteExerciseAsync(int id, CancellationToken ct)
@@ -52,28 +49,17 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             EnsureFileExists();
 
-            var lines = await File.ReadAllLinesAsync(
+            var json = await File.ReadAllTextAsync(
                 _storageOptions.ExercisesFilePath,
                 ct);
 
-            var exercises = new List<Exercise>();
+            var exercisesData = JsonSerializer.Deserialize<List<ExerciseData>>(
+                json,
+                JsonOptions) ?? [];
 
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var exerciseData = JsonSerializer.Deserialize<ExerciseData>(
-                    line,
-                    JsonOptions);
-
-                if (exerciseData is null)
-                    continue;
-
-                exercises.Add(ExerciseMapper.ToDomain(exerciseData));
-            }
-
-            return exercises;
+            return exercisesData
+                .Select(ExerciseMapper.ToDomain)
+                .ToList();
         }
 
         public async Task<Exercise?> GetExerciseByIdAsync(int id, CancellationToken ct)
@@ -101,14 +87,15 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             IEnumerable<Exercise> exercises,
             CancellationToken ct)
         {
-            var lines = exercises.Select(exercise =>
-                JsonSerializer.Serialize(
-                    ExerciseMapper.ToData(exercise),
-                    JsonOptions));
+            var exercisesData = exercises
+                .Select(ExerciseMapper.ToData)
+                .ToList();
 
-            await File.WriteAllLinesAsync(
+            var json = JsonSerializer.Serialize(exercisesData, JsonOptions);
+
+            await File.WriteAllTextAsync(
                 _storageOptions.ExercisesFilePath,
-                lines,
+                json,
                 ct);
         }
 
@@ -122,7 +109,7 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
             if (!File.Exists(filePath))
             {
-                using var stream = File.Create(filePath);
+                File.WriteAllText(filePath, "[]");
             }
         }
 

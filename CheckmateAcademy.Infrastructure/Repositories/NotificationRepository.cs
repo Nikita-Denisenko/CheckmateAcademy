@@ -14,7 +14,8 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
         };
 
         public NotificationRepository(StorageOptions storageOptions)
@@ -27,15 +28,9 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             Notification notification,
             CancellationToken ct)
         {
-            EnsureFileExists();
-
-            var notificationData = NotificationMapper.ToData(notification);
-            var json = JsonSerializer.Serialize(notificationData, JsonOptions);
-
-            await File.AppendAllTextAsync(
-                _storageOptions.NotificationsFilePath,
-                json + Environment.NewLine,
-                ct);
+            var notifications = await GetAllNotificationsAsync(ct);
+            notifications.Add(notification);
+            await WriteNotificationsAsync(notifications, ct);
         }
 
         public async Task DeleteNotificationAsync(int id, CancellationToken ct)
@@ -55,28 +50,17 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             EnsureFileExists();
 
-            var lines = await File.ReadAllLinesAsync(
+            var json = await File.ReadAllTextAsync(
                 _storageOptions.NotificationsFilePath,
                 ct);
 
-            var notifications = new List<Notification>();
+            var notificationsData = JsonSerializer.Deserialize<List<NotificationData>>(
+                json,
+                JsonOptions) ?? [];
 
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var notificationData = JsonSerializer.Deserialize<NotificationData>(
-                    line,
-                    JsonOptions);
-
-                if (notificationData is null)
-                    continue;
-
-                notifications.Add(NotificationMapper.ToDomain(notificationData));
-            }
-
-            return notifications;
+            return notificationsData
+                .Select(NotificationMapper.ToDomain)
+                .ToList();
         }
 
         public async Task<Notification?> GetNotificationByIdAsync(
@@ -108,14 +92,15 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             IEnumerable<Notification> notifications,
             CancellationToken ct)
         {
-            var lines = notifications.Select(notification =>
-                JsonSerializer.Serialize(
-                    NotificationMapper.ToData(notification),
-                    JsonOptions));
+            var notificationsData = notifications
+                .Select(NotificationMapper.ToData)
+                .ToList();
 
-            await File.WriteAllLinesAsync(
+            var json = JsonSerializer.Serialize(notificationsData, JsonOptions);
+
+            await File.WriteAllTextAsync(
                 _storageOptions.NotificationsFilePath,
-                lines,
+                json,
                 ct);
         }
 
@@ -128,9 +113,7 @@ namespace CheckmateAcademy.Infrastructure.Repositories
                 Directory.CreateDirectory(directory);
 
             if (!File.Exists(filePath))
-            {
-                using var stream = File.Create(filePath);
-            }
+                File.WriteAllText(filePath, "[]");
         }
 
         public async Task<int> GetNextIdAsync(CancellationToken ct)

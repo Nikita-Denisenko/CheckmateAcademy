@@ -14,7 +14,8 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
         };
 
         public FollowRepository(StorageOptions storageOptions)
@@ -25,15 +26,9 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
         public async Task CreateFollowAsync(Follow follow, CancellationToken ct)
         {
-            EnsureFileExists();
-
-            var followData = FollowMapper.ToData(follow);
-            var json = JsonSerializer.Serialize(followData, JsonOptions);
-
-            await File.AppendAllTextAsync(
-                _storageOptions.FollowsFilePath,
-                json + Environment.NewLine,
-                ct);
+            var follows = await GetAllFollowsAsync(ct);
+            follows.Add(follow);
+            await WriteFollowsAsync(follows, ct);
         }
 
         public async Task DeleteFollowAsync(int id, CancellationToken ct)
@@ -52,28 +47,17 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             EnsureFileExists();
 
-            var lines = await File.ReadAllLinesAsync(
+            var json = await File.ReadAllTextAsync(
                 _storageOptions.FollowsFilePath,
                 ct);
 
-            var follows = new List<Follow>();
+            var followsData = JsonSerializer.Deserialize<List<FollowData>>(
+                json,
+                JsonOptions) ?? [];
 
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var followData = JsonSerializer.Deserialize<FollowData>(
-                    line,
-                    JsonOptions);
-
-                if (followData is null)
-                    continue;
-
-                follows.Add(FollowMapper.ToDomain(followData));
-            }
-
-            return follows;
+            return followsData
+                .Select(FollowMapper.ToDomain)
+                .ToList();
         }
 
         public async Task<Follow?> GetFollowByIdAsync(int id, CancellationToken ct)
@@ -101,14 +85,15 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             IEnumerable<Follow> follows,
             CancellationToken ct)
         {
-            var lines = follows.Select(follow =>
-                JsonSerializer.Serialize(
-                    FollowMapper.ToData(follow),
-                    JsonOptions));
+            var followsData = follows
+                .Select(FollowMapper.ToData)
+                .ToList();
 
-            await File.WriteAllLinesAsync(
+            var json = JsonSerializer.Serialize(followsData, JsonOptions);
+
+            await File.WriteAllTextAsync(
                 _storageOptions.FollowsFilePath,
-                lines,
+                json,
                 ct);
         }
 
@@ -121,9 +106,7 @@ namespace CheckmateAcademy.Infrastructure.Repositories
                 Directory.CreateDirectory(directory);
 
             if (!File.Exists(filePath))
-            {
-                using var stream = File.Create(filePath);
-            }
+                File.WriteAllText(filePath, "[]");
         }
 
         public async Task<int> GetNextIdAsync(CancellationToken ct)

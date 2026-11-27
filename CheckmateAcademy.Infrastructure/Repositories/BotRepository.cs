@@ -14,7 +14,8 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
         };
 
         public BotRepository(StorageOptions storageOptions)
@@ -25,15 +26,11 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
         public async Task CreateBotAsync(Bot bot, CancellationToken ct)
         {
-            EnsureFileExists();
+            var bots = await GetAllBotsAsync(ct);
 
-            var botData = BotMapper.ToData(bot);
-            var json = JsonSerializer.Serialize(botData, JsonOptions);
+            bots.Add(bot);
 
-            await File.AppendAllTextAsync(
-                _storageOptions.BotsFilePath,
-                json + Environment.NewLine,
-                ct);
+            await WriteBotsAsync(bots, ct);
         }
 
         public async Task DeleteBotAsync(int id, CancellationToken ct)
@@ -52,28 +49,17 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             EnsureFileExists();
 
-            var lines = await File.ReadAllLinesAsync(
+            var json = await File.ReadAllTextAsync(
                 _storageOptions.BotsFilePath,
                 ct);
 
-            var bots = new List<Bot>();
+            var botsData = JsonSerializer.Deserialize<List<BotData>>(
+                json,
+                JsonOptions) ?? [];
 
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-                
-                var botData = JsonSerializer.Deserialize<BotData>(
-                    line,
-                    JsonOptions);
-
-                if (botData is null)
-                    continue;
-
-                bots.Add(BotMapper.ToDomain(botData));
-            }
-
-            return bots;
+            return botsData
+                .Select(BotMapper.ToDomain)
+                .ToList();
         }
 
         public async Task<Bot?> GetBotByIdAsync(int id, CancellationToken ct)
@@ -101,14 +87,15 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             IEnumerable<Bot> bots,
             CancellationToken ct)
         {
-            var lines = bots.Select(bot =>
-                JsonSerializer.Serialize(
-                    BotMapper.ToData(bot),
-                    JsonOptions));
+            var botsData = bots
+                .Select(BotMapper.ToData)
+                .ToList();
 
-            await File.WriteAllLinesAsync(
+            var json = JsonSerializer.Serialize(botsData, JsonOptions);
+
+            await File.WriteAllTextAsync(
                 _storageOptions.BotsFilePath,
-                lines,
+                json,
                 ct);
         }
 
@@ -122,7 +109,7 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
             if (!File.Exists(filePath))
             {
-                using var stream = File.Create(filePath);
+                File.WriteAllText(filePath, "[]");
             }
         }
 

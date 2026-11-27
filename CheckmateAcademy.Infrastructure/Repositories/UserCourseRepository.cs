@@ -14,7 +14,8 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
         };
 
         public UserCourseRepository(StorageOptions storageOptions)
@@ -27,8 +28,6 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             UserCourse userCourse,
             CancellationToken ct)
         {
-            EnsureFileExists();
-
             var userCourses = await GetAllUserCoursesAsync(ct);
 
             var alreadyExists = userCourses.Any(uc =>
@@ -39,13 +38,9 @@ namespace CheckmateAcademy.Infrastructure.Repositories
                 throw new InvalidOperationException(
                     "User is already enrolled in this course.");
 
-            var userCourseData = UserCourseMapper.ToData(userCourse);
-            var json = JsonSerializer.Serialize(userCourseData, JsonOptions);
+            userCourses.Add(userCourse);
 
-            await File.AppendAllTextAsync(
-                _storageOptions.UserCoursesFilePath,
-                json + Environment.NewLine,
-                ct);
+            await WriteUserCoursesAsync(userCourses, ct);
         }
 
         public async Task<UserCourse?> GetUserCourseAsync(
@@ -65,29 +60,17 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             EnsureFileExists();
 
-            var lines = await File.ReadAllLinesAsync(
+            var json = await File.ReadAllTextAsync(
                 _storageOptions.UserCoursesFilePath,
                 ct);
 
-            var userCourses = new List<UserCourse>();
+            var userCoursesData = JsonSerializer.Deserialize<List<CourseProgressData>>(
+                json,
+                JsonOptions) ?? [];
 
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var userCourseData =
-                    JsonSerializer.Deserialize<CourseProgressData>(
-                        line,
-                        JsonOptions);
-
-                if (userCourseData is null)
-                    continue;
-
-                userCourses.Add(UserCourseMapper.ToDomain(userCourseData));
-            }
-
-            return userCourses;
+            return userCoursesData
+                .Select(UserCourseMapper.ToDomain)
+                .ToList();
         }
 
         public async Task UpdateUserCourseAsync(
@@ -129,14 +112,15 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             IEnumerable<UserCourse> userCourses,
             CancellationToken ct)
         {
-            var lines = userCourses.Select(userCourse =>
-                JsonSerializer.Serialize(
-                    UserCourseMapper.ToData(userCourse),
-                    JsonOptions));
+            var userCoursesData = userCourses
+                .Select(UserCourseMapper.ToData)
+                .ToList();
 
-            await File.WriteAllLinesAsync(
+            var json = JsonSerializer.Serialize(userCoursesData, JsonOptions);
+
+            await File.WriteAllTextAsync(
                 _storageOptions.UserCoursesFilePath,
-                lines,
+                json,
                 ct);
         }
 
@@ -149,9 +133,7 @@ namespace CheckmateAcademy.Infrastructure.Repositories
                 Directory.CreateDirectory(directory);
 
             if (!File.Exists(filePath))
-            {
-                using var stream = File.Create(filePath);
-            }
+                File.WriteAllText(filePath, "[]");
         }
     }
 }

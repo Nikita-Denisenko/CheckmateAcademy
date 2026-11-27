@@ -1,5 +1,4 @@
-﻿
-using CheckmateAcademy.Application.DataModels;
+﻿using CheckmateAcademy.Application.DataModels;
 using CheckmateAcademy.Application.Interfaces.Repositories;
 using CheckmateAcademy.Domain.Entities;
 using CheckmateAcademy.Infrastructure.Configuration;
@@ -16,7 +15,8 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
         };
 
         public UserTaskProgressRepository(
@@ -136,40 +136,24 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             EnsureFileExists();
 
-            var lines = await File.ReadAllLinesAsync(
+            var json = await File.ReadAllTextAsync(
                 _storageOptions.UserTasksProgressFilePath,
                 ct);
 
-            var progresses = new List<UserTaskProgressData>();
-
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var data = JsonSerializer.Deserialize<UserTaskProgressData>(
-                    line,
-                    JsonOptions);
-
-                if (data != null)
-                    progresses.Add(data);
-            }
-
-            return progresses;
+            return JsonSerializer.Deserialize<List<UserTaskProgressData>>(
+                json,
+                JsonOptions) ?? [];
         }
 
         private async Task WriteAllDataAsync(
             List<UserTaskProgressData> progresses,
             CancellationToken ct)
         {
-            EnsureFileExists();
+            var json = JsonSerializer.Serialize(progresses, JsonOptions);
 
-            var lines = progresses.Select(progress =>
-                JsonSerializer.Serialize(progress, JsonOptions));
-
-            await File.WriteAllLinesAsync(
+            await File.WriteAllTextAsync(
                 _storageOptions.UserTasksProgressFilePath,
-                lines,
+                json,
                 ct);
         }
 
@@ -182,9 +166,7 @@ namespace CheckmateAcademy.Infrastructure.Repositories
                 Directory.CreateDirectory(directory);
 
             if (!File.Exists(filePath))
-            {
-                using var stream = File.Create(filePath);
-            }
+                File.WriteAllText(filePath, "[]");
         }
     }
 }

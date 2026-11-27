@@ -14,7 +14,8 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
         };
 
         public GameRepository(StorageOptions storageOptions)
@@ -25,15 +26,9 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
         public async Task CreateGameAsync(Game game, CancellationToken ct)
         {
-            EnsureFileExists();
-
-            var gameData = GameMapper.ToData(game);
-            var json = JsonSerializer.Serialize(gameData, JsonOptions);
-
-            await File.AppendAllTextAsync(
-                _storageOptions.GamesFilePath,
-                json + Environment.NewLine,
-                ct);
+            var games = await GetAllGamesAsync(ct);
+            games.Add(game);
+            await WriteGamesAsync(games, ct);
         }
 
         public async Task DeleteGameAsync(int id, CancellationToken ct)
@@ -52,28 +47,17 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             EnsureFileExists();
 
-            var lines = await File.ReadAllLinesAsync(
+            var json = await File.ReadAllTextAsync(
                 _storageOptions.GamesFilePath,
                 ct);
 
-            var games = new List<Game>();
+            var gamesData = JsonSerializer.Deserialize<List<GameData>>(
+                json,
+                JsonOptions) ?? [];
 
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var gameData = JsonSerializer.Deserialize<GameData>(
-                    line,
-                    JsonOptions);
-
-                if (gameData is null)
-                    continue;
-
-                games.Add(GameMapper.ToDomain(gameData));
-            }
-
-            return games;
+            return gamesData
+                .Select(GameMapper.ToDomain)
+                .ToList();
         }
 
         public async Task<Game?> GetGameByIdAsync(int id, CancellationToken ct)
@@ -101,14 +85,15 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             IEnumerable<Game> games,
             CancellationToken ct)
         {
-            var lines = games.Select(game =>
-                JsonSerializer.Serialize(
-                    GameMapper.ToData(game),
-                    JsonOptions));
+            var gamesData = games
+                .Select(GameMapper.ToData)
+                .ToList();
 
-            await File.WriteAllLinesAsync(
+            var json = JsonSerializer.Serialize(gamesData, JsonOptions);
+
+            await File.WriteAllTextAsync(
                 _storageOptions.GamesFilePath,
-                lines,
+                json,
                 ct);
         }
 
@@ -121,9 +106,7 @@ namespace CheckmateAcademy.Infrastructure.Repositories
                 Directory.CreateDirectory(directory);
 
             if (!File.Exists(filePath))
-            {
-                using var stream = File.Create(filePath);
-            }
+                File.WriteAllText(filePath, "[]");
         }
 
         public async Task<int> GetNextIdAsync(CancellationToken ct)
@@ -133,4 +116,3 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         }
     }
 }
-

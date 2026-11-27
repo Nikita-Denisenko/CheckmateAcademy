@@ -15,7 +15,8 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
         };
 
         public UserRepository(StorageOptions storageOptions)
@@ -26,15 +27,9 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
         public async Task CreateUserAsync(User user, CancellationToken ct)
         {
-            EnsureFileExists();
-
-            var userData = UserMapper.ToData(user);
-            var json = JsonSerializer.Serialize(userData, JsonOptions);
-
-            await File.AppendAllTextAsync(
-                _storageOptions.UsersFilePath,
-                json + Environment.NewLine,
-                ct);
+            var users = await GetAllUsersAsync(ct);
+            users.Add(user);
+            await WriteUsersAsync(users, ct);
         }
 
         public async Task<User?> GetUserByIdAsync(int id, CancellationToken ct)
@@ -48,28 +43,17 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             EnsureFileExists();
 
-            var lines = await File.ReadAllLinesAsync(
+            var json = await File.ReadAllTextAsync(
                 _storageOptions.UsersFilePath,
                 ct);
 
-            var users = new List<User>();
+            var usersData = JsonSerializer.Deserialize<List<UserData>>(
+                json,
+                JsonOptions) ?? [];
 
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var userData = JsonSerializer.Deserialize<UserData>(
-                    line,
-                    JsonOptions);
-
-                if (userData is null)
-                    continue;
-
-                users.Add(UserMapper.ToDomain(userData));
-            }
-
-            return users;
+            return usersData
+                .Select(UserMapper.ToDomain)
+                .ToList();
         }
 
         public async Task UpdateUserAsync(User user, CancellationToken ct)
@@ -102,14 +86,15 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             IEnumerable<User> users,
             CancellationToken ct)
         {
-            var lines = users.Select(user =>
-                JsonSerializer.Serialize(
-                    UserMapper.ToData(user),
-                    JsonOptions));
+            var usersData = users
+                .Select(UserMapper.ToData)
+                .ToList();
 
-            await File.WriteAllLinesAsync(
+            var json = JsonSerializer.Serialize(usersData, JsonOptions);
+
+            await File.WriteAllTextAsync(
                 _storageOptions.UsersFilePath,
-                lines,
+                json,
                 ct);
         }
 
@@ -122,9 +107,7 @@ namespace CheckmateAcademy.Infrastructure.Repositories
                 Directory.CreateDirectory(directory);
 
             if (!File.Exists(filePath))
-            {
-                using var stream = File.Create(filePath);
-            }
+                File.WriteAllText(filePath, "[]");
         }
 
         public async Task<User?> GetUserByEmailAsync(

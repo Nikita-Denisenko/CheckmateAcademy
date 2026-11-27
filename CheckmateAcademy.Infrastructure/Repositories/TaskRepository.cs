@@ -14,7 +14,8 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
         };
 
         public TaskRepository(StorageOptions storageOptions)
@@ -27,15 +28,9 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             ChessTask chessTask,
             CancellationToken ct)
         {
-            EnsureFileExists();
-
-            var chessTaskData = ChessTaskMapper.ToData(chessTask);
-            var json = JsonSerializer.Serialize(chessTaskData, JsonOptions);
-
-            await File.AppendAllTextAsync(
-                _storageOptions.TasksFilePath,
-                json + Environment.NewLine,
-                ct);
+            var chessTasks = await GetAllChessTasksAsync(ct);
+            chessTasks.Add(chessTask);
+            await WriteChessTasksAsync(chessTasks, ct);
         }
 
         public async Task DeleteChessTaskAsync(int id, CancellationToken ct)
@@ -55,28 +50,17 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             EnsureFileExists();
 
-            var lines = await File.ReadAllLinesAsync(
+            var json = await File.ReadAllTextAsync(
                 _storageOptions.TasksFilePath,
                 ct);
 
-            var chessTasks = new List<ChessTask>();
+            var chessTasksData = JsonSerializer.Deserialize<List<ChessTaskData>>(
+                json,
+                JsonOptions) ?? [];
 
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var chessTaskData = JsonSerializer.Deserialize<ChessTaskData>(
-                    line,
-                    JsonOptions);
-
-                if (chessTaskData is null)
-                    continue;
-
-                chessTasks.Add(ChessTaskMapper.ToDomain(chessTaskData));
-            }
-
-            return chessTasks;
+            return chessTasksData
+                .Select(ChessTaskMapper.ToDomain)
+                .ToList();
         }
 
         public async Task<ChessTask?> GetChessTaskByIdAsync(
@@ -108,14 +92,15 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             IEnumerable<ChessTask> chessTasks,
             CancellationToken ct)
         {
-            var lines = chessTasks.Select(chessTask =>
-                JsonSerializer.Serialize(
-                    ChessTaskMapper.ToData(chessTask),
-                    JsonOptions));
+            var chessTasksData = chessTasks
+                .Select(ChessTaskMapper.ToData)
+                .ToList();
 
-            await File.WriteAllLinesAsync(
+            var json = JsonSerializer.Serialize(chessTasksData, JsonOptions);
+
+            await File.WriteAllTextAsync(
                 _storageOptions.TasksFilePath,
-                lines,
+                json,
                 ct);
         }
 
@@ -128,9 +113,7 @@ namespace CheckmateAcademy.Infrastructure.Repositories
                 Directory.CreateDirectory(directory);
 
             if (!File.Exists(filePath))
-            {
-                using var stream = File.Create(filePath);
-            }
+                File.WriteAllText(filePath, "[]");
         }
 
         public async Task<int> GetNextIdAsync(CancellationToken ct)

@@ -14,7 +14,8 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             PropertyNameCaseInsensitive = true,
-            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            WriteIndented = true
         };
 
         public StudyRepository(StorageOptions storageOptions)
@@ -25,15 +26,9 @@ namespace CheckmateAcademy.Infrastructure.Repositories
 
         public async Task CreateStudyAsync(Study study, CancellationToken ct)
         {
-            EnsureFileExists();
-
-            var studyData = StudyMapper.ToData(study);
-            var json = JsonSerializer.Serialize(studyData, JsonOptions);
-
-            await File.AppendAllTextAsync(
-                _storageOptions.StudiesFilePath,
-                json + Environment.NewLine,
-                ct);
+            var studies = await GetAllStudiesAsync(ct);
+            studies.Add(study);
+            await WriteStudiesAsync(studies, ct);
         }
 
         public async Task DeleteStudyAsync(int id, CancellationToken ct)
@@ -52,28 +47,17 @@ namespace CheckmateAcademy.Infrastructure.Repositories
         {
             EnsureFileExists();
 
-            var lines = await File.ReadAllLinesAsync(
+            var json = await File.ReadAllTextAsync(
                 _storageOptions.StudiesFilePath,
                 ct);
 
-            var studies = new List<Study>();
+            var studiesData = JsonSerializer.Deserialize<List<StudyData>>(
+                json,
+                JsonOptions) ?? [];
 
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var studyData = JsonSerializer.Deserialize<StudyData>(
-                    line,
-                    JsonOptions);
-
-                if (studyData is null)
-                    continue;
-
-                studies.Add(StudyMapper.ToDomain(studyData));
-            }
-
-            return studies;
+            return studiesData
+                .Select(StudyMapper.ToDomain)
+                .ToList();
         }
 
         public async Task<Study?> GetStudyByIdAsync(int id, CancellationToken ct)
@@ -101,14 +85,15 @@ namespace CheckmateAcademy.Infrastructure.Repositories
             IEnumerable<Study> studies,
             CancellationToken ct)
         {
-            var lines = studies.Select(study =>
-                JsonSerializer.Serialize(
-                    StudyMapper.ToData(study),
-                    JsonOptions));
+            var studiesData = studies
+                .Select(StudyMapper.ToData)
+                .ToList();
 
-            await File.WriteAllLinesAsync(
+            var json = JsonSerializer.Serialize(studiesData, JsonOptions);
+
+            await File.WriteAllTextAsync(
                 _storageOptions.StudiesFilePath,
-                lines,
+                json,
                 ct);
         }
 
@@ -121,9 +106,7 @@ namespace CheckmateAcademy.Infrastructure.Repositories
                 Directory.CreateDirectory(directory);
 
             if (!File.Exists(filePath))
-            {
-                using var stream = File.Create(filePath);
-            }
+                File.WriteAllText(filePath, "[]");
         }
 
         public async Task<int> GetNextIdAsync(CancellationToken ct)

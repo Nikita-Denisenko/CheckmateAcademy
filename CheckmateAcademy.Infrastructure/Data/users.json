@@ -1,0 +1,15 @@
+[
+  {
+    "Id": 1,
+    "Name": "Иванов",
+    "Surname": "Иван",
+    "BirthDate": "2008-01-19T00:00:00",
+    "AboutInfo": null,
+    "AvatarUrl": null,
+    "FideRating": null,
+    "RusRating": null,
+    "Email": "ivanov19@mail.ru",
+    "PasswordHash": "pbkdf2-sha256$600000$9H1sZMOif5M/AJrXYZ1Mrg==$TMbdthtPDBxwc8TPobXwu6GM3yVVPsM/CZFsqUq6SWY=",
+    "Role": "Customer"
+  }
+]
